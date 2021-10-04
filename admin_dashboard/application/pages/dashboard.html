@@ -1,8 +1,30 @@
- <head>
+<head>
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="css/login.css">
-</head> 
-<h1>
-  Welcome to dashboard
-  <a href="/api/auth/logout">Log out</a>
-</h1>
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div id="header">
+    <img id="logo" src="./asset/images/grey_logo.svg" width="50px" />
+    <p id="headerText">Network</p>
+    <button class="btn logout">
+      <a style="text-decoration: none; color: white" href="/api/auth/logout"
+        >Log out</a
+      >
+    </button>
+  </div>
+  <div id="midContainer">
+    <div id="sidebar">
+      <div class="sidebarContent">
+        <img src="./asset/images/network.png" width="30px"/>
+        <p>Network</p>
+      </div>
+      <div>
+        <img src="./asset/images/database.svg" width="30px"/>
+        <p>Database</p>
+      </div>
+    </div class="sidebarContent">
+    <div id="contentContainer">
+      <h1>Welcome to dashboard</h1>
+    </div>
+  </div>
+</body>
