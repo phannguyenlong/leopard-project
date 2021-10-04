@@ -5,8 +5,27 @@
 const express = require("express")
 const router = express.Router()
 
-router.get('/', async function (req, res) {
-    res.send("hello")
+const { Gateway } = require('fabric-network');
+const { createContract } = require('../util/WebUtil.js');
+const chaincodeName = "assembly_line"
+
+router.get('/queryAll', async function (req, res) {
+    const gateway = new Gateway()
+
+    try {
+        // get contract from the network
+        const contract = await createContract(gateway, 'assembly_line', req.cookies.session)
+        // test
+        console.log("GET ALL ASSESTS")
+        let data = await contract.evaluateTransaction('GetAllProduct')
+        res.status(200).json(JSON.parse(data.toString()))
+        
+    } catch (err) {
+        console.error("error: " + err)
+        res.redirect('/login')
+    } finally {
+        gateway.disconnect()
+    }
 })
 
 module.exports = router

@@ -6,12 +6,11 @@ const express = require("express")
 const router = express.Router()
 const crypto = require('crypto');
 
-const { Gateway, Wallets } = require('fabric-network');
+const { Wallets } = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
 const path = require('path');
 const { buildCAClient, enrollAdmin, regsiterUser, enrollUser } = require('../../../test-application/javascript/CAUtil.js');
 const { buildCCPOrg1, buildWallet } = require('../../../test-application/javascript/AppUtil.js');
-const {createContract} = require('../util/WebUtil.js');
 
 const mspOrg1 = 'Org1MSP';
 const walletPath = path.join(__dirname, '../wallet');
