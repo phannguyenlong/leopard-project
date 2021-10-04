@@ -1,0 +1,52 @@
+<h1>
+    Dashboard
+</h1>
+
+<div id="account"></div>
+
+<h2>All Asset</h2>
+<div id="asset"></div>
+
+<script>
+    let account;
+    fetch('http://localhost:8080/api/account')
+    .then(res => res.json())
+    .then(data => {
+        account = data[0].Record
+        document.getElementById('account').innerHTML = `
+            <p>Account Name: ${account.accountID}</p>
+            <p>Bank: ${account.bank}</p>
+            <p>Balance: ${account.balance}</p>
+            <p>Owner: ${account.owner}</p>
+            <a href='/account?id=${account.accountID}'>Detail</a>
+        `
+    })
+
+    fetch('http://localhost:8080/api/queryALL')
+    .then(res => res.json())
+    .then(data => {
+        for (let i = 0; i < data.length; i++) {
+            asset = data[i].Record
+            // console.log(asset)
+            let assetHTML = `
+                <p>Asset Name: ${asset.name}</p>
+                <p>Color: ${asset.color}</p>
+                <p>Price: ${asset.appraisedValue}</p>
+                <p>Owner: ${asset.owner}</p>
+                <a href='/assets?id=${asset.assetID}'>More Info</a>
+                <button onclick='buyAsset("${asset.assetID}", "${asset.appraisedValue}", "${asset.owner}")'>Buy</button>
+                <p>=====================================<p>
+            `
+            document.getElementById("asset").insertAdjacentHTML('beforeend', assetHTML);
+        }
+    })
+    function buyAsset(assetID, price, owner) {
+        fetch(`http://localhost:8080/api/transferAssets`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `assetID=${assetID}&newOwner=${account.accountID}&price=${price}&owner=${owner}`
+        }). then(res => alert('sucess'))
+    }
+</script>

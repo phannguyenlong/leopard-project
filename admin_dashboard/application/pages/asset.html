@@ -1,0 +1,47 @@
+<h1>Asset Info</h1>
+
+<div id="asset"></div>
+
+<h2>History of Assets</h2>
+<div id="history"></div>
+
+<script>
+    function findGetParameter(parameterName) {
+        var result = null,
+            tmp = [];
+        var items = location.search.substr(1).split("&");
+        for (var index = 0; index < items.length; index++) {
+            tmp = items[index].split("=");
+            if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+        }
+        return result;
+    }
+
+    let assetID = findGetParameter('id')
+    fetch('http://localhost:8080/api/asset/' + assetID)
+    .then(res => res.json())
+    .then(asset => {
+        console.log(asset)
+        document.getElementById('asset').innerHTML = `
+            <p>Asset Name: ${asset.name}</p>
+            <p>Color: ${asset.color}</p>
+            <p>Price: ${asset.appraisedValue}</p>
+            <p>Owner: ${asset.owner}</p>
+        `
+    })
+
+    fetch('http://localhost:8080/api/asset/history/' + assetID)
+    .then(res => res.json())
+    .then(data => {
+        console.log(data)
+        for (let i = 0; i < data.length; i++) {
+            historyHTML = `
+                <p>Transaction ID: ${data[i].TxId}</p>
+                <p>Time: ${new Date(parseInt(data[i].Timestamp.seconds))}</p>
+                <p>Owner at that time: ${data[i].Value.owner}</p>
+                <p>=====================================<p>
+            `
+            document.getElementById("history").insertAdjacentHTML('beforeend', historyHTML);
+        }
+    })
+</script>

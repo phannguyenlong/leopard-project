@@ -1,0 +1,49 @@
+<h1>
+    Your Account
+</h1>
+
+<div id="account"></div>
+
+<h2>History of Transaction</h2>
+<div id="history"></div>
+
+<script>
+    function findGetParameter(parameterName) {
+        var result = null,
+            tmp = [];
+        var items = location.search.substr(1).split("&");
+        for (var index = 0; index < items.length; index++) {
+            tmp = items[index].split("=");
+            if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+        }
+        return result;
+    }
+
+    let accountID = findGetParameter('id')
+    fetch('http://localhost:8080/api/account')
+    .then(res => res.json())
+    .then(data => {
+        account = data[0].Record
+        document.getElementById('account').innerHTML = `
+            <p>Account Name: ${account.accountID}</p>
+            <p>Bank: ${account.bank}</p>
+            <p>Balance: ${account.balance}</p>
+            <p>Owner: ${account.owner}</p>
+        `
+    })
+
+    fetch('http://localhost:8080/api/account/history/' + accountID)
+    .then(res => res.json())
+    .then(data => {
+        console.log(data)
+        for (let i = 0; i < data.length; i++) {
+            historyHTML = `
+                <p>Transaction ID: ${data[i].TxId}</p>
+                <p>Time: ${new Date(parseInt(data[i].Timestamp.seconds))}</p>
+                <p>Balance at that time: ${data[i].Value.balance}</p>
+                <p>=====================================<p>
+            `
+            document.getElementById("history").insertAdjacentHTML('beforeend', historyHTML);
+        }
+    })
+</script>
