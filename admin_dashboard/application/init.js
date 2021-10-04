@@ -79,7 +79,7 @@ async function main() {
 		try {
 			await gateway.connect(ccp, {
 				wallet,
-				identity: org1UserId,
+				identity: userId,
 				discovery: { enabled: true, asLocalhost: true }
 			})
 

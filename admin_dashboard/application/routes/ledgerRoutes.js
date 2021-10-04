@@ -14,7 +14,7 @@ router.get('/queryAll', async function (req, res) {
 
     try {
         // get contract from the network
-        const contract = await createContract(gateway, 'assembly_line', req.cookies.session)
+        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
         // test
         console.log("GET ALL ASSESTS")
         let data = await contract.evaluateTransaction('GetAllProduct')
@@ -26,6 +26,11 @@ router.get('/queryAll', async function (req, res) {
     } finally {
         gateway.disconnect()
     }
+})
+
+router.get("/queryByKey", async function (req, res) {
+    let key = req.query.id // get param from request
+    console.log(key)
 })
 
 module.exports = router

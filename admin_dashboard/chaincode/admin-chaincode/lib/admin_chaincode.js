@@ -1,11 +1,11 @@
 /**
  * List of all funcion
  * createProduct(ctx, product) # with product is the full object of product
- * getALlProduct(ctx) # return product in the database
- * ProdcutExists(ctx, id) # check product exists or not
- * DeleteProduct(ctx, prodcutID) # delete product base on productID
+ * GetALlProduct(ctx) # return product in the database
+ * productExists(ctx, id) # check product exists or not
+ * DeleteProduct(ctx, productID) # delete product base on productID
  * UpdateProduct(ctx, product) # with product is the full object of product
- * GetProductHistory(ctx, prodcutID) # return all the transaction of that product
+ * GetProductHistory(ctx, productID) # return all the transaction of that product
  */
 
 'use strict';
@@ -16,9 +16,9 @@ class Chaincode extends Contract {
 
 	// CreateAsset - create a new asset, store into chaincode state
 	async createProduct(ctx, product) {
-		const exists = await this.ProdcutExists(ctx, product.prodcutID);
-		if (exists) {
-			throw new Error(`The account ${accountID} already exists`);
+		const exists = await this.productExists(ctx, product.productID);
+		if (JSON.parse(exists.toString())) {
+			throw new Error(`The product ${product.productID} already exists`);
 		}
 
 		// === Save product to state ===
@@ -36,20 +36,20 @@ class Chaincode extends Contract {
 		return accountJSON.toString();
 	}
 
-	async ProdcutExists(ctx, id) {
+	async productExists(ctx, id) {
 		// ==== Check if asset already exists ====
 		let product = await ctx.stub.getState(id);
-		product = JSON.parse(accounts.toString())
-		return product != null;
+
+		return product && product.length > 0;
 	}
 
 	// delete - remove a asset key/value pair from state
-	async DeleteProduct(ctx, prodcutID) {
+	async DeleteProduct(ctx, productID) {
 		if (!id) {
 			throw new Error('Product id must not be empty');
 		}
 
-		let exists = await this.ProdcutExists(ctx, prodcutID);
+		let exists = await this.productExists(ctx, productID);
 		if (!exists) {
 			throw new Error(`Product ${id} does not exist`);
 		}
@@ -71,9 +71,9 @@ class Chaincode extends Contract {
 	}
 
 	// GetAssetHistory returns the chain of custody for an asset since issuance.
-	async GetProductHistory(ctx, prodcutID) {
+	async GetProductHistory(ctx, productID) {
 
-		let resultsIterator = await ctx.stub.getHistoryForKey(prodcutID);
+		let resultsIterator = await ctx.stub.getHistoryForKey(productID);
 		let results = await this._GetAllResults(resultsIterator, true);
 
 		return JSON.stringify(results);
@@ -138,7 +138,7 @@ class Chaincode extends Contract {
 
 	// InitLedger creates sample assets in the ledger
 	async InitLedger(ctx) {
-		const prodcuts = [
+		const products = [
 			{
 				productID: "1",
 				productType: "car",
@@ -204,8 +204,8 @@ class Chaincode extends Contract {
 			}
 		]
 
-		for (const prodcut of prodcuts) {
-			await this.createProduct(ctx, prodcut);
+		for (const product of products) {
+			await this.createProduct(ctx, product);
 		}
 	}
 }
