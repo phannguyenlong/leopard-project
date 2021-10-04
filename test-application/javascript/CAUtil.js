@@ -105,7 +105,7 @@ exports.enrollUser = async (caClient, wallet, orgMspId, userId, secret, label) =
 		await wallet.put(label, x509Identity);
 		console.log(`Successfully enrolled user ${userId} and imported it into the wallet`);
 	} catch (error) {
-		console.error(`Failed to enroll user : ${error}`);
+		throw new Error(error)
 	}
 };
 

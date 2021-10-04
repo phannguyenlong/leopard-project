@@ -23,7 +23,7 @@ router.get('/queryAll', async function (req, res) {
         
     } catch (err) {
         console.error("error: " + err)
-        res.redirect('/login.html')
+        res.send(500) // return error code
     } finally {
         gateway.disconnect()
     }

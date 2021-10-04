@@ -27,15 +27,14 @@ router.post('/login', async function (req, res) {
         // creat hash
         hash = crypto.createHmac('sha256', SECRET_KEY).update(req.body.username).digest('hex');
 
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + req.body.username)
-
         await enrollUser(caClient, wallet, mspOrg1, req.body.username, req.body.password, hash);
 
         // create cookie
         res.cookie('session', hash, { expires: new Date(Date.now() + 9000000000000000)})
-        res.redirect("/") // success
-	} catch (error) {
-        res.redirect('/login.html')
+        res.redirect("/dashboard.html") // success
+    } catch (error) {
+        console.log(error.message)
+        res.redirect('/login.html?message=Authentication failed')
     }
 })
 

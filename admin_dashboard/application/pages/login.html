@@ -1,9 +1,36 @@
+ <head>
+  <title>Admin Dashboard Login</title>
+  <link rel="stylesheet" href="css/login.css">
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head> 
+
 <div class="log-form">
-  <h2>Login to your account</h2>
-  <form action="/api/auth/login" method="POST">
-    <input type="text" name="username" placeholder="username" />
-    <input type="password" name="password" placeholder="password" />
-    <button type="submit" class="btn">Login</button>
-    <a href="/register">Register here</a>
-  </form>
+  <div id="logoContainer">
+    <img src="./asset/images/black_logo.png" width="100px" />
+    <h2>The Leopard Project</h2>
+  </div>
+  <div id="inputContainer">
+    <form id="submitForm" action="/api/auth/login" method="POST">
+      <span>Username</span>
+      <input class="dataInput" type="text" name="username" placeholder="username" />
+      <span>Password</span>
+      <input class="dataInput" type="password" name="password" placeholder="password" />
+      <div style="text-align: right;">
+        <button type="submit" class="btn">Log in</button>
+      </div>
+    </form>
+  </div>
 </div>
+
+<script>
+  var queryDict = {}
+  location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]})
+  if (queryDict.message) {
+    Swal.fire({
+      title: decodeURI(queryDict.message),
+      icon: 'error',
+      confirmButtonColor: '#3085d6',
+      footer: "<p>Contact your admin to if you don't have account</p>"
+    })
+  }
+</script>
