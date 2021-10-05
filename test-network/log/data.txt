@@ -1,4 +1,0 @@
-{"Org" : "peer0.org1", "Channel" : "mychannel"}
-{"Org" : "peer0.org2", "Channel" : "mychannel"}
-{"Org" : "peer0.org1", "Channel" : "channel1"}
-{"Org" : "peer0.org2", "Channel" : "channel1"}
