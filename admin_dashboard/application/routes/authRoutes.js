@@ -46,7 +46,7 @@ router.post('/login', async function (req, res) {
 
         // create cookie
         res.cookie('session', hash, { expires: new Date(Date.now() + 9000000000000000)})
-        res.redirect("/dashboard.html") // success
+        res.redirect("/dashboard/") // success
     } catch (error) {
         console.log(error.message)
         res.redirect('/login.html?message=Authentication failed')

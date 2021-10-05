@@ -1,0 +1,42 @@
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="../../css/dashboard.css" />
+  <link rel="stylesheet" href="./index.css" />
+</head>
+<body>
+  <div id="header">
+    <img id="logo" src="../../asset/images/grey_logo.svg" width="50px" />
+    <p id="headerText">Network</p>
+    <button class="btn logout">
+      <a style="text-decoration: none;color: inherit;" href="/api/auth/logout"
+        >Log out</a
+      >
+    </button>
+  </div>
+  <div id="midContainer">
+    <div id="sidebar">
+      <a style="text-decoration: none;color: inherit" href="/dashboard/network">
+        <div class="sidebarContent highlightSelected">
+          <img src="../../asset/images/network.png" width="30px"/>
+          <p>Network</p>
+        </div>
+      </a>
+      <a style="text-decoration: none;color: inherit" href="/dashboard/database">
+        <div class="sidebarContent">
+          <img src="../../asset/images/database.svg" width="30px"/>
+          <p>Database</p>
+        </div>
+      </a>
+    </div class="sidebarContent">
+    <div id="contentContainer">
+      <h1>Welcome to dashboard</h1>
+    </div>
+  </div>
+  <script>
+    fetch("http://localhost:8080/api/auth/").then(res => {
+      if(res.status != 200) {
+        window.location.href = "http://localhost:8080/login.html";
+      }
+    })
+  </script>
+</body>

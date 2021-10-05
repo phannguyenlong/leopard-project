@@ -1,0 +1,14 @@
+<head>
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <script>
+    fetch("http://localhost:8080/api/auth/").then(res => {
+      if(res.status != 200) {
+        window.location.href = "http://localhost:8080/login.html";
+      } else {
+        window.location.href = "http://localhost:8080/dashboard/network"
+      }
+    })
+  </script>
+</body>
