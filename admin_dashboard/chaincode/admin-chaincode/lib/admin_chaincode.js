@@ -207,7 +207,7 @@ class Chaincode extends Contract {
 		]
 
 		for (const product of products) {
-			await this.createProduct(ctx, product);
+			await this.createProduct(ctx, JSON.stringify(product));
 		}
 	}
 }
