@@ -1,10 +1,10 @@
 /**
  * List of all funcion
- * createProduct(ctx, product) # with product is the full object of product
+ * createProduct(ctx, product) # with product is the full object of product (IN STRING JSON.stringtify())
  * GetALlProduct(ctx) # return product in the database
  * productExists(ctx, id) # check product exists or not
  * DeleteProduct(ctx, productID) # delete product base on productID
- * UpdateProduct(ctx, product) # with product is the full object of product
+ * UpdateProduct(ctx, product) # with product is the full object of product (IN STRING JSON.stringtify())
  * GetProductHistory(ctx, productID) # return all the transaction of that product
  */
 
@@ -16,6 +16,7 @@ class Chaincode extends Contract {
 
 	// CreateAsset - create a new asset, store into chaincode state
 	async createProduct(ctx, product) {
+		product = JSON.parse(product)
 		const exists = await this.productExists(ctx, product.productID);
 		if (JSON.parse(exists.toString())) {
 			throw new Error(`The product ${product.productID} already exists`);
@@ -58,7 +59,8 @@ class Chaincode extends Contract {
 	}
 
 	async UpdateProduct(ctx, product) {
-		let exists = await this.ProductExists(ctx, product.productID);
+		product = JSON.parse(product)
+		let exists = await this.productExists(ctx, product.productID);
 		if (!exists) {
 			throw new Error(`Product ${product.productID} does not exist`);
 		}
