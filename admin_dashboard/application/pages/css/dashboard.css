@@ -34,6 +34,7 @@ body {
     margin: 5px 10px 5px 10px;
     color: white;
     font-weight: bolder;
+    border: none;
 }
 
 .logout {
@@ -57,11 +58,20 @@ body {
 
 .sidebarContent {
     margin: 40px 5px 40px 5px;
-    background-color: #0074A2;
     padding: 10px;
+    cursor: pointer;
+}
+
+.sidebarContent:hover {
+    background: #054b66;
+}
+
+.highlightSelected {
+    background-color: #0074A2;
+    /* padding: 10px; */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     width: 100%;
-}
+ }
 
 #contentContainer {
     margin: 10px;
