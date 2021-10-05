@@ -45,22 +45,22 @@ class Chaincode extends Contract {
 
 	// delete - remove a asset key/value pair from state
 	async DeleteProduct(ctx, productID) {
-		if (!id) {
+		if (!productID) {
 			throw new Error('Product id must not be empty');
 		}
 
 		let exists = await this.productExists(ctx, productID);
 		if (!exists) {
-			throw new Error(`Product ${id} does not exist`);
+			throw new Error(`Product ${productID} does not exist`);
 		}
 
-		await ctx.stub.deleteState(id); //remove the asset from chaincode state
+		await ctx.stub.deleteState(productID); //remove the asset from chaincode state
 	}
 
 	async UpdateProduct(ctx, product) {
 		let exists = await this.ProductExists(ctx, product.productID);
 		if (!exists) {
-			throw new Error(`Product ${id} does not exist`);
+			throw new Error(`Product ${product.productID} does not exist`);
 		}
 
 		try {
