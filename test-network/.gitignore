@@ -14,3 +14,4 @@ system-genesis-block/*
 log.txt
 network_config.log
 /log/channels/*
+!/log/channels/.gitkeep
