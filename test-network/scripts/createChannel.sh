@@ -37,13 +37,13 @@ createChannel() {
 	while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ] ; do
 		sleep $DELAY
 		set -x
-		osnadmin channel join --channelID $CHANNEL_NAME --config-block ./channel-artifacts/${CHANNEL_NAME}.block -o localhost:7053 --ca-file "$ORDERER_CA" --client-cert "$ORDERER_ADMIN_TLS_SIGN_CERT" --client-key "$ORDERER_ADMIN_TLS_PRIVATE_KEY" >&log.txt
+		osnadmin channel join --channelID $CHANNEL_NAME --config-block ./channel-artifacts/${CHANNEL_NAME}.block -o localhost:7053 --ca-file "$ORDERER_CA" --client-cert "$ORDERER_ADMIN_TLS_SIGN_CERT" --client-key "$ORDERER_ADMIN_TLS_PRIVATE_KEY" >log/channels/${CHANNEL_NAME}.log
 		res=$?
 		{ set +x; } 2>/dev/null
 		let rc=$res
 		COUNTER=$(expr $COUNTER + 1)
 	done
-	cat log.txt
+	cat log/channels/$CHANNEL_NAME.log
 	verifyResult $res "Channel creation failed"
 }
 
@@ -71,6 +71,7 @@ joinChannel() {
 setAnchorPeer() {
   ORG=$1
   docker exec cli ./scripts/setAnchorPeer.sh $ORG $CHANNEL_NAME 
+  
 }
 
 FABRIC_CFG_PATH=${PWD}/configtx

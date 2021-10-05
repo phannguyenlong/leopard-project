@@ -1,0 +1,9 @@
+Status: 201
+{
+	"name": "channel1",
+	"url": "/participation/v1/channels/channel1",
+	"consensusRelation": "consenter",
+	"status": "active",
+	"height": 1
+}
+
