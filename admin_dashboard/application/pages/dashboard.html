@@ -27,4 +27,11 @@
       <h1>Welcome to dashboard</h1>
     </div>
   </div>
+  <script>
+    fetch("http://localhost:8080/api/auth/").then(res => {
+      if(res.status != 200) {
+        window.location.href = "http://localhost:8080/login.html";
+      }
+    })
+  </script>
 </body>

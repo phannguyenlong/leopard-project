@@ -17,6 +17,21 @@ const walletPath = path.join(__dirname, '../wallet');
 const SECRET_KEY = 'mysupersecretkeyhahahahaha'
 
 
+router.get("/", async function (req, res) {
+    try {
+        const wallet = await buildWallet(Wallets, walletPath)
+        const user = await wallet.get(req.cookies.session)
+        if (!user) {
+            console.log("RUN here")
+            res.send(401)
+        } else {
+            res.send(200)
+        }
+    } catch (err) {
+        res.status(500).send(err)
+    }
+})
+
 router.post('/login', async function (req, res) {
     let hash;
     try {
