@@ -34,9 +34,35 @@ router.get("/queryByKey", async function (req, res) {
     const gateway = new Gateway()
     let key = req.query.id // get param from request
     let queryString = {
-        selector: {_id: key} // put the key here to query
+      selector: {
+        _id: {
+          $regex: key, // put the key here to query
+        },
+      }, 
+    };
+    try {
+        // get contract from the network
+        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+
+        console.log("GET Asset by key")
+        let data = await contract.evaluateTransaction('QuerryProduct', JSON.stringify(queryString)) // remember to convert to stirng pass
+        res.status(200).json(JSON.parse(data.toString()))
+        
+    } catch (err) {
+        console.error("error: " + err)
+        res.send(500)
+    } finally {
+        gateway.disconnect()
     }
-    console.log(queryString)
+})
+
+// GET /api/ledger/getData
+router.get("/getData", async function (req, res) {
+    const gateway = new Gateway()
+    let key = req.query.id // get param from request
+    let queryString = {
+      selector: { _id: key},
+    };
     try {
         // get contract from the network
         const contract = await createContract(gateway, chaincodeName, req.cookies.session)

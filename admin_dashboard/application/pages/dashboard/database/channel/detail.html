@@ -1,0 +1,108 @@
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../../../css/dashboard.css" />
+    <link rel="stylesheet" href="./detail.css" />
+    <!--Script for table-->
+    <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+    <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.0.5/jspdf.plugin.autotable.js"></script>
+</head>
+<body>
+  <div id="header">
+    <img id="logo" src="../../../asset/images/grey_logo.svg" width="50px" />
+    <p id="headerText">Channel Database</p>
+    <button class="btn logout">
+      <a style="text-decoration: none;color: inherit;" href="/api/auth/logout"
+        >Log out</a
+      >
+    </button>
+  </div>
+  <div id="midContainer">
+    <div id="sidebar">
+      <a href="/dashboard/network">
+        <div class="sidebarContent">
+          <img src="../../../asset/images/network.png" width="30px"/>
+          <p>Network</p>
+        </div>
+      </a>
+      <a href="/dashboard/database">
+        <div class="sidebarContent highlightSelected">
+          <img src="../../../asset/images/database.svg" width="30px"/>
+          <p>Database</p>
+        </div>
+      </a>
+    </div class="sidebarContent">
+    <div id="contentContainer">
+        Product
+        <div id="table"></div>
+        <button id="print-table">Print Table</button>
+        <button id="history-undo">Undo Edit</button>
+        <button id="history-redo">Redo Edit</button>
+        <button id="download-xlsx">Download XLSX</button>
+        <button id="download-pdf">Download PDF</button>
+    </div>
+    </div>
+  </div>
+  <script>
+    // Check Auth
+    fetch("http://localhost:8080/api/auth/").then(res => {
+      if(res.status != 200) {
+        window.location.href = "http://localhost:8080/login.html";
+      }
+    })
+
+    let id = (new URL(window.location.href)).searchParams.get("id");
+    document.getElementById("headerText").innerHTML= `${id}`
+    let table
+
+    // fetch data and constrcut table
+    fetch(`http://localhost:8080/api/ledger/getData?id=${id}`).then(res => res.json())
+    .then(data => {
+        data = data[0].Record
+        var tabledata = data.procedures
+        console.log(tabledata)
+
+        //initialize table
+        table = new Tabulator("#table", {
+            data:tabledata, //assign data to table
+            autoColumns:true, //create columns from data field names
+            history:true,             //allow undo and redo actions on the table
+            movableColumns:true,      //allow column order to be changed
+            layout:"fitColumns",
+            printAsHtml:true, //enable html table printing
+            printHeader:`<h2>Product ${data.productID} report<h1>`,
+        });
+    })
+
+    document.getElementById("print-table").addEventListener("click", function(){
+        table.print(false, true);
+    });
+
+    //undo button
+    document.getElementById("history-undo").addEventListener("click", function(){
+        table.undo();
+    });
+
+    //redo button
+    document.getElementById("history-redo").addEventListener("click", function(){
+        table.redo();
+    });
+
+
+    //trigger download of data.xlsx file
+    document.getElementById("download-xlsx").addEventListener("click", function(){
+        table.download("xlsx", "data.xlsx", {sheetName:`product ${id} report`});
+    });
+
+    //trigger download of data.pdf file
+    document.getElementById("download-pdf").addEventListener("click", function(){
+        table.download("pdf", "data.pdf", {
+            orientation:"portrait", //set page orientation to portrait
+            title:`Product ${id} Report`, //add title to report
+        });
+    });
+    console.log(table.getData())  
+  </script>
+</body>
