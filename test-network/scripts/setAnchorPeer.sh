@@ -32,6 +32,9 @@ createAnchorPeerUpdate() {
 
   set -x
   # Modify the configuration to append the anchor peer 
+  echo {\"Org\" : \"${HOST}\", \"Channel\" :  \"$CHANNEL_NAME\"} >> /tmp/network_config.log
+  cat /tmp/network_config.log
+
   jq '.channel_group.groups.Application.groups.'${CORE_PEER_LOCALMSPID}'.values += {"AnchorPeers":{"mod_policy": "Admins","value":{"anchor_peers": [{"host": "'$HOST'","port": '$PORT'}]},"version": "0"}}' ${CORE_PEER_LOCALMSPID}config.json > ${CORE_PEER_LOCALMSPID}modified_config.json
   { set +x; } 2>/dev/null
 
@@ -51,6 +54,7 @@ updateAnchorPeer() {
 
 ORG=$1
 CHANNEL_NAME=$2
+
 setGlobalsCLI $ORG
 
 createAnchorPeerUpdate 
