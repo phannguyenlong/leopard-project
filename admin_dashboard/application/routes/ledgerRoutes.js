@@ -84,28 +84,22 @@ router.get("/getData", async function (req, res) {
 
 // PUT /api/ledger/updateProduct
 router.put("/updateProduct", async function (req, res) {
-    
-    //const gateway = new Gateway()
-    
-   //var product = req.body
-        //var a = fetch('/updateProduct', body)
-        console.log('Got body:', req.body);
-        res.sendStatus(200);
-     
-    // try {
-    //     // get contract from the network
-    //     const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+    const gateway = new Gateway()
+    let data = req.body
+    try {
+        // get contract from the network
+        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
 
-    //     console.log('Got body:', req.body);
-    //     let data = await contract.submitTransaction('UpdateProduct', product) // remember to convert to stirng pass
-    //     res.status(200).json(JSON.parse(data.toString()))
+        console.log("Update Product")
+        await contract.submitTransaction('UpdateProduct', JSON.stringify(data)) // remember to convert to stirng pass
+        res.sendStatus(200)
         
-    // } catch (err) {
-    //     console.error("error: " + err)
-    //     res.send(500)
-    // } finally {
-    //     gateway.disconnect()
-    // }
+    } catch (err) {
+        console.error("error: " + err)
+        res.sendStatus(500)
+    } finally {
+        gateway.disconnect()
+    }
 })
 
 // DELETE /api/ledger/DeleteValueByKey
@@ -113,10 +107,6 @@ router.delete("/deleteValueByKey", async function (req, res) {
     const gateway = new Gateway()
     let key = req.query.id // get param from request
 
-    let queryString = {
-        selector: {_id: key} // put the key here to query
-    }
-    console.log(queryString)
     try {
         // get contract from the network
         const contract = await createContract(gateway, chaincodeName, req.cookies.session)
