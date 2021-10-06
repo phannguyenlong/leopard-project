@@ -5,9 +5,11 @@
 'use strict';
 
 const { Wallets } = require('fabric-network');
-const path = require('path');
 const { buildCCPOrg1, buildWallet } = require('../../../test-application/javascript/AppUtil.js');
-const Ajv = require("ajv")
+const Ajv = require("ajv");
+const path = require('path');
+const fs = require('fs');
+const jsf = require('json-schema-faker');
 
 const walletPath = path.join(__dirname, '../wallet');
 const channelName = 'mychannel';
@@ -39,8 +41,15 @@ exports.createContract = async function (gateway, chaincodeName, indentity) {
 
 exports.validateSchema = async function (object) {
     const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
-    let file = fs.readFileSync("../../server-config/mychannel_schema1.json")
+    let file = fs.readFileSync("../../server-config/mychannel_schema.json")
     const validate = ajv.compile(JSON.parse(file))
 
     return validate(object)
+}
+
+exports.generateFakeObject = function () {
+    let file = fs.readFileSync("../server-config/mychannel_schema.json")
+    jsf.option({ alwaysFakeOptionals: true, maxItems: 1 }) // fill up all field
+    let object = jsf.generate(JSON.parse(file.toString()))
+    return object
 }

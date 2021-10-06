@@ -1,0 +1,138 @@
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="../../../css/dashboard.css" />
+  <link rel="stylesheet" href="./new.css" />
+  <!--Script for table-->
+  <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
+  <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+  <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.0.5/jspdf.plugin.autotable.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+  <div id="header">
+    <img id="logo" src="../../../asset/images/grey_logo.svg" width="50px" />
+    <p id="headerText">New Product</p>
+    <button class="btn logout">
+      <a style="text-decoration: none;color: inherit;" href="/api/auth/logout">Log out</a>
+    </button>
+  </div>
+  <div id="midContainer">
+    <div id="sidebar">
+      <a href="/dashboard/network">
+        <div class="sidebarContent">
+          <img src="../../../asset/images/network.png" width="30px" />
+          <p>Network</p>
+        </div>
+      </a>
+      <a href="/dashboard/database">
+        <div class="sidebarContent highlightSelected">
+          <img src="../../../asset/images/database.svg" width="30px" />
+          <p>Database</p>
+        </div>
+      </a>
+    </div>
+    <div id="contentContainer">
+      <!--========================Product Info==========================-->
+      <h2>Product</h2>
+      <div id="productInfo">
+        <div class="infoEleContainer">
+            <p>ProductID: </p>
+            <input class="dataInput" id="productID" placeholder="Product ID" />
+        </div>
+        <div class="infoEleContainer">
+            <p>Product Description: </p>
+            <input class="dataInput" id="productDescription" placeholder="Product Description" />
+        </div>
+        <div class="infoEleContainer">
+            <p>Product Type: </p>
+            <input class="dataInput" id="productType" placeholder="Product type" />
+        </div>
+      </div>
+      <div id="editContainer">
+        <button class="btn actionBtn" onclick="table.addRow({})">Add Row</button>
+        <button class="btn actionBtn" onclick="table.deleteRow(table.getSelectedRows())">Delete Row</button>
+        <button class="btn actionBtn" onclick="table.undo();">Undo</button>
+        <button class="btn actionBtn" onclick="table.redo();">Redo</button>
+      </div>
+      <div id="table"></div>
+      <div id="submitContainer">
+        <button class="btn actionBtn" onclick="addData()" style="background-color: #4E8C67;">Add Product</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    //============================Init part===============================
+    // Check Auth
+    fetch("http://localhost:8080/api/auth/").then(res => {
+      if (res.status != 200) {
+        window.location.href = "http://localhost:8080/login.html";
+      }
+    })
+    let table, product
+
+    fetch("http://localhost:8080/api/ledger/fakeData"). then(res => res.json())
+    .then(data => {
+      product = data
+      var tabledata = data.procedures
+
+      // Config column
+      let keys = Object.keys(data.procedures[0])
+      let columns_config = []
+      for (let i = 0; i < keys.length; i++) {
+        columns_config[i] = { title: keys[i], field: keys[i], editor: "input", validator: "required" }
+      }
+
+      //initialize table
+      table = new Tabulator("#table", {
+        data: tabledata, //assign data to table
+        layout: "fitColumns",
+        selectable:true, //make rows selectable
+        addRowPos: "top",          //when adding a new row, add it to the top of the table
+        history: true,             //allow undo and redo actions on the table
+        movableColumns: true,      //allow column order to be changed
+        columns: columns_config,
+        validationMode: "highlight"
+      });
+    })
+    //=========================Function part======================
+    // for makeAlert
+    function makeAlert(type, title) {
+      Swal.fire({
+        title: title,
+        icon: type,
+        confirmButtonColor: '#3085d6',
+      })
+    }
+
+    // addData to ledger
+    async function addData() {
+      product.productID = document.getElementById("productID").value
+      product.productType = document.getElementById("productType").value
+      product.productDescription = document.getElementById("productDescription").value
+      if (table.validate() == true && product.productID != null && product.productType != null) {
+        product.procedures = table.getData()
+        product.numberOfProcedure = product.procedures.length
+        
+        const response = await fetch("http://localhost:8080/api/ledger/addData", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(product)
+        })
+        if (response.status == 200) {
+          // redirect
+          window.location.href = "/dashboard/database/channel/detail.html?id=" + product.productID;
+        }
+        else makeAlert("error", "Update error: " + response.statusText)
+        console.log(response)
+      } else {
+        makeAlert("error", "Wrong data type")
+      }
+    }
+   
+  </script>
+</body>

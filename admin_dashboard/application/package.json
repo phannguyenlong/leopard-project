@@ -16,6 +16,7 @@
         "crypto": "^1.0.1",
         "express": "^4.17.1",
         "fabric-ca-client": "^2.2.4",
-        "fabric-network": "^2.2.4"
+        "fabric-network": "^2.2.4",
+        "json-schema-faker": "^0.5.0-rcv.40"
     }
 }

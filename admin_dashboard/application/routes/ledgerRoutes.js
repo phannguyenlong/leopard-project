@@ -2,13 +2,11 @@
  * File for ledger route (interact with ledger)
  * @author Lam Xuan Bach, Vuong Chi Hieu, Phan Nguyen Long
  */
-const bodyParser = require("body-parser");
-const { application } = require("express");
 const express = require("express")
 const router = express.Router()
 
 const { Gateway } = require('fabric-network');
-const { createContract } = require('../util/WebUtil.js');
+const { createContract, validateSchema, generateFakeObject } = require('../util/WebUtil.js');
 const chaincodeName = "assembly_line"
 
 // GET /api/ledger/queryAll
@@ -148,16 +146,27 @@ router.get("/getProductHistory", async function (req, res) {
 router.post("/addData", async function (req, res) {
     const gateway = new Gateway()
     let data = req.body
+    if (!validateSchema(data)) {
+        res.status(500).send("Unvalid data type")
+    }
     try {
         const contract = await createContract(gateway, chaincodeName, req.cookies.session)
         await contract.submitTransaction('createProduct', JSON.stringify(data))
         res.status(200).send('Data added successfully')
     } catch (err) {
         console.error("error: " + err)
-        res.send(500).send('Something broke!')
+        res.status(500).send('Something broke!')
     } finally {
         gateway.disconnect()
     }
+})
+
+
+// GET /api/ledger/fakeData
+// Use for generate fake object from user define schema
+router.get("/fakeData", async function (req, res) {
+    let obj = await generateFakeObject()
+    res.status(200).json(obj)
 })
 
 module.exports = router

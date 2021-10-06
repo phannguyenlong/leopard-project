@@ -45,9 +45,10 @@
       </div>
       <div id="editContainer">
         <button class="btn actionBtn" onclick="table.addRow({})">Add Row</button>
-        <button class="btn actionBtn" onclick="table.print(false, true)">Print</button>
+        <button class="btn actionBtn" onclick="table.deleteRow(table.getSelectedRows())">Delete Row</button>
         <button class="btn actionBtn" onclick="table.undo();">Undo</button>
         <button class="btn actionBtn" onclick="table.redo();">Redo</button>
+        <button class="btn actionBtn" onclick="table.print(false, true)">Print</button>
         <button class="btn actionBtn" id="download-xlsx">Download XLSX</button>
         <button class="btn actionBtn" id="download-pdf">Download PDF</button>
       </div>
@@ -113,7 +114,9 @@
         table = new Tabulator("#table", {
           data: tabledata, //assign data to table
           layout: "fitColumns",
-          tooltips: true,            //show tool tips on cell
+          selectable:true, //make rows selectable
+          // selectableRangeMode:"click",
+          // tooltips: true,            //show tool tips on cell
           addRowPos: "top",          //when adding a new row, add it to the top of the table
           history: true,             //allow undo and redo actions on the table
           movableColumns: true,      //allow column order to be changed
@@ -152,8 +155,7 @@
 
     async function updateData() {
       product.procedures = table.getData()
-
-      console.log(table.validate())
+      product.numberOfProcedure = product.procedures.length
 
       if (table.validate() == true) {
         const response = await fetch("http://localhost:8080/api/ledger/updateProduct", {
