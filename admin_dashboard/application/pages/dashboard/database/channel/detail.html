@@ -44,6 +44,7 @@
         <p><strong>Number of procedures: </strong><span id="numberOfProcedure"></span></p>
       </div>
       <div id="editContainer">
+        <button class="btn actionBtn" onclick="table.addRow({})">Add Row</button>
         <button class="btn actionBtn" onclick="table.print(false, true)">Print</button>
         <button class="btn actionBtn" onclick="table.undo();">Undo</button>
         <button class="btn actionBtn" onclick="table.redo();">Redo</button>
@@ -87,7 +88,7 @@
         keys = Object.keys(data.procedures[0])
         let columns_config = []
         for (let i = 0 ; i < keys.length; i++) {
-          columns_config[i] = {title: keys[i], field: keys[i], editor: "input"}
+          columns_config[i] = {title: keys[i], field: keys[i], editor: "input", validator:"required"}
         }
 
         //initialize table
@@ -101,6 +102,7 @@
             printAsHtml:true, //enable html table printing
             printHeader:`<h2>Product ${data.productID} report<h1>`,
             columns: columns_config,
+            validationMode:"highlight"
         });
     })
 
@@ -117,6 +119,7 @@
         });
     });
 
+    // for makeAlert
     function makeAlert(type, title) {
       Swal.fire({
         title: title,
@@ -129,16 +132,22 @@
     async function updateData() {
       product.procedures = table.getData()
 
-      const response = await fetch("http://localhost:8080/api/ledger/updateProduct", {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(product)
-      })
+      console.log(table.validate())
+      
+      if (table.validate() == true) {
+        const response = await fetch("http://localhost:8080/api/ledger/updateProduct", {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(product)
+        })
+        if (response.status == 200) makeAlert("success", "Update Sucess")
+        else makeAlert("error", "Update error")
+      } else {
+        makeAlert("error", "Wrong data type")
+      }
 
-      if (response.status == 200) makeAlert("success", "Update Sucess")
-      else makeAlert("error", "Update error")
     }
   </script>
 </body>
