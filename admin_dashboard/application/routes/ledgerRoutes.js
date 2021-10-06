@@ -144,4 +144,20 @@ router.get("/getProductHistory", async function (req, res) {
     }
 })
 
+// POST /api/ledger/addData
+router.post("/addData", async function (req, res) {
+    const gateway = new Gateway()
+    let data = req.body
+    try {
+        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+        await contract.submitTransaction('createProduct', JSON.stringify(data))
+        res.status(200).send('Data added successfully')
+    } catch (err) {
+        console.error("error: " + err)
+        res.send(500).send('Something broke!')
+    } finally {
+        gateway.disconnect()
+    }
+})
+
 module.exports = router
