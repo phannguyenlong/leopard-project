@@ -1,0 +1,52 @@
+.highlightSelected {
+    background-color: #0074A2;
+    /* padding: 10px; */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 100%;
+}
+
+a {
+    text-decoration: none;color: inherit
+}
+
+/*Horizontally center header and footer*/
+.tabulator-print-header, tabulator-print-footer{
+    text-align:center;
+}
+
+#contentContainer {
+    width: 100%;
+    padding: 10px 20px 10px 20px;
+}
+
+.actionBtn {
+    background-color: #0074A2;
+    border-radius: 5px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.actionBtn:hover {
+    background: #054b66;
+    cursor: pointer;
+}
+
+#editContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+#productInfo {
+    margin: 10px 0px 10px 0px;
+}
+
+#submitContainer {
+    margin: 10px 0px 10px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}

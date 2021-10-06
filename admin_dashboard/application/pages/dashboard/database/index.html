@@ -15,13 +15,13 @@
   </div>
   <div id="midContainer">
     <div id="sidebar">
-      <a style="text-decoration: none;color: inherit" href="/dashboard/network">
+      <a href="/dashboard/network">
         <div class="sidebarContent">
           <img src="../../asset/images/network.png" width="30px"/>
           <p>Network</p>
         </div>
       </a>
-      <a style="text-decoration: none;color: inherit" href="/dashboard/database">
+      <a href="/dashboard/database">
         <div class="sidebarContent highlightSelected">
           <img src="../../asset/images/database.svg" width="30px"/>
           <p>Database</p>
@@ -29,7 +29,40 @@
       </a>
     </div class="sidebarContent">
     <div id="contentContainer">
-      <h1>Welcome to dashboard</h1>
+      <div id="searchContainer">
+        <input id="searchBar" placeholder="Assembly line name" />
+        <button class="btn newBtn">
+          <img src="../../asset/images/new.svg" width="20px"/>
+          <a href="#">New</a>
+        </button>
+      </div>
+      <div id="resultContainer">
+
+        <div class="row">
+          <p>myChannel assembly line</p>
+          <button class="btn newBtn" style="width: 110px;">
+            <a href="channel?channelName=myChannel">Query</a>
+            <img src="../../asset/images/goto.svg" width="20px" />
+          </button>
+        </div>
+
+        <div class="row">
+          <p>Anthother assembly line</p>
+          <button class="btn newBtn" style="width: 110px;">
+            <a href="channel?channelName=another">Query</a>
+            <img src="../../asset/images/goto.svg" width="20px" />
+          </button>
+        </div>
+
+        <div class="row">
+          <p>Gun assembly line</p>
+          <button class="btn newBtn" style="width: 110px;">
+            <a href="channel?channelName=gun">Query</a>
+            <img src="../../asset/images/goto.svg" width="20px" />
+          </button>
+        </div>
+
+      </div>
     </div>
   </div>
   <script>

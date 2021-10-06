@@ -1,0 +1,88 @@
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="../../../css/dashboard.css" />
+  <link rel="stylesheet" href="./index.css" />
+</head>
+<body>
+  <div id="header">
+    <img id="logo" src="../../../asset/images/grey_logo.svg" width="50px" />
+    <p id="headerText">Channel Database</p>
+    <button class="btn logout">
+      <a style="text-decoration: none;color: inherit;" href="/api/auth/logout"
+        >Log out</a
+      >
+    </button>
+  </div>
+  <div id="midContainer">
+    <div id="sidebar">
+      <a href="/dashboard/network">
+        <div class="sidebarContent">
+          <img src="../../../asset/images/network.png" width="30px"/>
+          <p>Network</p>
+        </div>
+      </a>
+      <a href="/dashboard/database">
+        <div class="sidebarContent highlightSelected">
+          <img src="../../../asset/images/database.svg" width="30px"/>
+          <p>Database</p>
+        </div>
+      </a>
+    </div class="sidebarContent">
+    <div id="contentContainer">
+      <div id="searchContainer">
+        <input id="searchBar" placeholder="ID" onkeydown="search(this)" />
+        <button class="btn newBtn">
+          <img src="../../../asset/images/new.svg" width="20px"/>
+          <a href="#">New</a>
+        </button>
+      </div>
+      <div id="resultContainer"></div>
+    </div>
+    </div>
+  </div>
+  <script>
+    // Check Auth
+    fetch("http://localhost:8080/api/auth/").then(res => {
+      if(res.status != 200) {
+        window.location.href = "http://localhost:8080/login.html";
+      }
+    })
+
+    let channelName = (new URL(window.location.href)).searchParams.get("channelName");
+    // console.log(channelName)
+    document.getElementById("headerText").innerHTML= `${channelName} Database`
+
+    // Fetch data
+    function getData(queryString) {
+        document.getElementById("resultContainer").innerHTML= ''
+        fetch(`http://localhost:8080/api/ledger/queryByKey?id=${queryString}`).then(res => res.json())
+        .then(datas => {
+            for (let i = 0; i < datas.length; i++) {
+                product = datas[i].Record
+                let productHTML = `
+                    <div class="row">
+                        <p>${product.productType} - ${product.productID}</p>
+                        <div style="display: flex">
+                            <button class="btn newBtn" style="width: 80px; background-color: #FF4B46">Delete</button>
+                            <button class="btn newBtn" style="width: 150px;">
+                            <a href="detail.html?id=${product.productID}">More Detail</a>
+                            <img src="../../../asset/images/goto.svg" width="20px" />
+                        <div>
+                        </button>
+                    </div>
+                `
+                document.getElementById("resultContainer").insertAdjacentHTML('beforeend', productHTML)
+            }
+        })
+    }
+
+    // search
+    function search(ele) {
+        if(event.key === 'Enter') {
+            getData(ele.value)
+        }
+    }
+
+    getData('') // runt he first time to get all products
+  </script>
+</body>

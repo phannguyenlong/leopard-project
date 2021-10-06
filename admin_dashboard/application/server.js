@@ -12,6 +12,7 @@ var app = express();
 // config app
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 const apiRoutes = require("./routes/api.routes")
 

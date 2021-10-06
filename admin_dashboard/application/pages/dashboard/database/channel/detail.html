@@ -1,0 +1,144 @@
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../../../css/dashboard.css" />
+    <link rel="stylesheet" href="./detail.css" />
+    <!--Script for table-->
+    <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+    <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.0.5/jspdf.plugin.autotable.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div id="header">
+    <img id="logo" src="../../../asset/images/grey_logo.svg" width="50px" />
+    <p id="headerText">Channel Database</p>
+    <button class="btn logout">
+      <a style="text-decoration: none;color: inherit;" href="/api/auth/logout"
+        >Log out</a
+      >
+    </button>
+  </div>
+  <div id="midContainer">
+    <div id="sidebar">
+      <a href="/dashboard/network">
+        <div class="sidebarContent">
+          <img src="../../../asset/images/network.png" width="30px"/>
+          <p>Network</p>
+        </div>
+      </a>
+      <a href="/dashboard/database">
+        <div class="sidebarContent highlightSelected">
+          <img src="../../../asset/images/database.svg" width="30px"/>
+          <p>Database</p>
+        </div>
+      </a>
+    </div class="sidebarContent">
+    <div id="contentContainer">
+      <h2>Product</h2>
+      <div id="productInfo">
+        <p><strong>ProductID: </strong><span id="productID"></span></p>
+        <p><strong>Product Description: </strong><span id="productDescription"></span></p>
+        <p><strong>Product Type: </strong><span id="productType"></span></p>
+        <p><strong>Number of procedures: </strong><span id="numberOfProcedure"></span></p>
+      </div>
+      <div id="editContainer">
+        <button class="btn actionBtn" onclick="table.print(false, true)">Print</button>
+        <button class="btn actionBtn" onclick="table.undo();">Undo</button>
+        <button class="btn actionBtn" onclick="table.redo();">Redo</button>
+        <button class="btn actionBtn" id="download-xlsx">Download XLSX</button>
+        <button class="btn actionBtn" id="download-pdf">Download PDF</button>
+      </div>
+      <div id="table"></div>
+      <div id="submitContainer">
+        <button class="btn actionBtn" onclick="deleteData()" style="background-color: #FF4B46;">Delete</button>
+        <button class="btn actionBtn" onclick="updateData()" style="background-color: #4E8C67;">Update</button>
+      </div>
+    </div>
+    </div>
+  </div>
+  <script>
+    // Check Auth
+    fetch("http://localhost:8080/api/auth/").then(res => {
+      if(res.status != 200) {
+        window.location.href = "http://localhost:8080/login.html";
+      }
+    })
+
+    let product, table
+    let id = (new URL(window.location.href)).searchParams.get("id");
+    document.getElementById("headerText").innerHTML= `${id}`
+
+    // fetch data and constrcut table
+    fetch(`http://localhost:8080/api/ledger/getData?id=${id}`).then(res => res.json())
+    .then(data => {
+        data = data[0].Record
+        product = data
+        var tabledata = data.procedures
+
+        // add data to product information
+        document.getElementById("productID").innerHTML = data.productID
+        document.getElementById("productDescription").innerHTML = data.productDescription
+        document.getElementById("productType").innerHTML = data.productType
+        document.getElementById("numberOfProcedure").innerHTML = data.numberOfProcedure
+
+        // Config column
+        keys = Object.keys(data.procedures[0])
+        let columns_config = []
+        for (let i = 0 ; i < keys.length; i++) {
+          columns_config[i] = {title: keys[i], field: keys[i], editor: "input"}
+        }
+
+        //initialize table
+        table = new Tabulator("#table", {
+            data:tabledata, //assign data to table
+            layout:"fitColumns",
+            tooltips:true,            //show tool tips on cell
+            addRowPos:"top",          //when adding a new row, add it to the top of the table
+            history:true,             //allow undo and redo actions on the table
+            movableColumns:true,      //allow column order to be changed
+            printAsHtml:true, //enable html table printing
+            printHeader:`<h2>Product ${data.productID} report<h1>`,
+            columns: columns_config,
+        });
+    })
+
+    //trigger download of data.xlsx file
+    document.getElementById("download-xlsx").addEventListener("click", function(){
+        table.download("xlsx", "data.xlsx", {sheetName:`product ${id} report`});
+    });
+
+    //trigger download of data.pdf file
+    document.getElementById("download-pdf").addEventListener("click", function(){
+        table.download("pdf", "data.pdf", {
+            orientation:"portrait", //set page orientation to portrait
+            title:`Product ${id} Report`, //add title to report
+        });
+    });
+
+    function makeAlert(type, title) {
+      Swal.fire({
+        title: title,
+        icon: type,
+        confirmButtonColor: '#3085d6',
+      })
+    }
+
+    // function part
+    async function updateData() {
+      product.procedures = table.getData()
+
+      const response = await fetch("http://localhost:8080/api/ledger/updateProduct", {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(product)
+      })
+
+      if (response.status == 200) makeAlert("success", "Update Sucess")
+      else makeAlert("error", "Update error")
+    }
+  </script>
+</body>

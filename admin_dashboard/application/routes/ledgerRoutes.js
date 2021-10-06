@@ -2,6 +2,8 @@
  * File for ledger route (interact with ledger)
  * @author Lam Xuan Bach, Vuong Chi Hieu, Phan Nguyen Long
  */
+const bodyParser = require("body-parser");
+const { application } = require("express");
 const express = require("express")
 const router = express.Router()
 
@@ -34,15 +36,104 @@ router.get("/queryByKey", async function (req, res) {
     const gateway = new Gateway()
     let key = req.query.id // get param from request
     let queryString = {
-        selector: {_id: key} // put the key here to query
-    }
-    console.log(queryString)
+      selector: {
+        _id: {
+          $regex: key, // put the key here to query
+        },
+      }, 
+    };
     try {
         // get contract from the network
         const contract = await createContract(gateway, chaincodeName, req.cookies.session)
 
         console.log("GET Asset by key")
         let data = await contract.evaluateTransaction('QuerryProduct', JSON.stringify(queryString)) // remember to convert to stirng pass
+        res.status(200).json(JSON.parse(data.toString()))
+        
+    } catch (err) {
+        console.error("error: " + err)
+        res.send(500)
+    } finally {
+        gateway.disconnect()
+    }
+})
+
+// GET /api/ledger/getData
+router.get("/getData", async function (req, res) {
+    const gateway = new Gateway()
+    let key = req.query.id // get param from request
+    let queryString = {
+      selector: { _id: key},
+    };
+    try {
+        // get contract from the network
+        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+
+        console.log("GET Asset by key")
+        let data = await contract.evaluateTransaction('QuerryProduct', JSON.stringify(queryString)) // remember to convert to stirng pass
+        res.status(200).json(JSON.parse(data.toString()))
+        
+    } catch (err) {
+        console.error("error: " + err)
+        res.send(500)
+    } finally {
+        gateway.disconnect()
+    }
+})
+
+
+// PUT /api/ledger/updateProduct
+router.put("/updateProduct", async function (req, res) {
+    const gateway = new Gateway()
+    let data = req.body
+    try {
+        // get contract from the network
+        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+
+        console.log("Update Product")
+        await contract.submitTransaction('UpdateProduct', JSON.stringify(data)) // remember to convert to stirng pass
+        res.sendStatus(200)
+        
+    } catch (err) {
+        console.error("error: " + err)
+        res.sendStatus(500)
+    } finally {
+        gateway.disconnect()
+    }
+})
+
+// DELETE /api/ledger/DeleteValueByKey
+router.delete("/deleteValueByKey", async function (req, res) {
+    const gateway = new Gateway()
+    let key = req.query.id // get param from request
+
+    try {
+        // get contract from the network
+        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+
+        console.log("DELETE Asset by key")
+        await contract.submitTransaction('DeleteProduct', key) // remember to convert to stirng pass
+        res.sendStatus(200)
+        
+    } catch (err) {
+        console.error("error: " + err)
+        res.sendStatus(500)
+    } finally {
+        gateway.disconnect()
+    }
+})
+
+// GET /api/ledger/GetProductHistory
+router.get("/getProductHistory", async function (req, res) {
+    const gateway = new Gateway()
+    let key = req.query.id // get param from request
+   
+    try {
+        // get contract from the network
+        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+
+        console.log("GET Product history")
+        let data = await contract.evaluateTransaction('GetProductHistory', key) // remember to convert to stirng pass
         res.status(200).json(JSON.parse(data.toString()))
         
     } catch (err) {
