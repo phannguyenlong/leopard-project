@@ -1,41 +1,41 @@
 <head>
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="../../../css/dashboard.css" />
-    <link rel="stylesheet" href="./detail.css" />
-    <!--Script for table-->
-    <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
-    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
-    <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.0.5/jspdf.plugin.autotable.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="../../../css/dashboard.css" />
+  <link rel="stylesheet" href="./detail.css" />
+  <!--Script for table-->
+  <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
+  <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+  <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.0.5/jspdf.plugin.autotable.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
   <div id="header">
     <img id="logo" src="../../../asset/images/grey_logo.svg" width="50px" />
     <p id="headerText">Channel Database</p>
     <button class="btn logout">
-      <a style="text-decoration: none;color: inherit;" href="/api/auth/logout"
-        >Log out</a
-      >
+      <a style="text-decoration: none;color: inherit;" href="/api/auth/logout">Log out</a>
     </button>
   </div>
   <div id="midContainer">
     <div id="sidebar">
       <a href="/dashboard/network">
         <div class="sidebarContent">
-          <img src="../../../asset/images/network.png" width="30px"/>
+          <img src="../../../asset/images/network.png" width="30px" />
           <p>Network</p>
         </div>
       </a>
       <a href="/dashboard/database">
         <div class="sidebarContent highlightSelected">
-          <img src="../../../asset/images/database.svg" width="30px"/>
+          <img src="../../../asset/images/database.svg" width="30px" />
           <p>Database</p>
         </div>
       </a>
-    </div class="sidebarContent">
+    </div>
     <div id="contentContainer">
+      <!--========================Product Info==========================-->
       <h2>Product</h2>
       <div id="productInfo">
         <p><strong>ProductID: </strong><span id="productID"></span></p>
@@ -56,24 +56,42 @@
         <button class="btn actionBtn" onclick="deleteData()" style="background-color: #FF4B46;">Delete</button>
         <button class="btn actionBtn" onclick="updateData()" style="background-color: #4E8C67;">Update</button>
       </div>
-    </div>
+      <!--========================Timeline==========================-->
+      <div id="historyContainer">
+        <h2>Product Timeline</h2>
+        <div class="timeline">
+          <div class="container left">
+            <div class="content">
+              <h2>2017</h2>
+              <p>Lorem ipsum..</p>
+            </div>
+          </div>
+          <div class="container right">
+            <div class="content">
+              <h2>2016</h2>
+              <p>Lorem ipsum..</p>
+            </div>
+          </div>
+        </div> 
+      </div>
     </div>
   </div>
   <script>
+    //============================Init part===============================
     // Check Auth
     fetch("http://localhost:8080/api/auth/").then(res => {
-      if(res.status != 200) {
+      if (res.status != 200) {
         window.location.href = "http://localhost:8080/login.html";
       }
     })
 
     let product, table
     let id = (new URL(window.location.href)).searchParams.get("id");
-    document.getElementById("headerText").innerHTML= `${id}`
+    document.getElementById("headerText").innerHTML = `${id}`
 
     // fetch data and constrcut table
     fetch(`http://localhost:8080/api/ledger/getData?id=${id}`).then(res => res.json())
-    .then(data => {
+      .then(data => {
         data = data[0].Record
         product = data
         var tabledata = data.procedures
@@ -87,38 +105,42 @@
         // Config column
         keys = Object.keys(data.procedures[0])
         let columns_config = []
-        for (let i = 0 ; i < keys.length; i++) {
-          columns_config[i] = {title: keys[i], field: keys[i], editor: "input", validator:"required"}
+        for (let i = 0; i < keys.length; i++) {
+          columns_config[i] = { title: keys[i], field: keys[i], editor: "input", validator: "required" }
         }
 
         //initialize table
         table = new Tabulator("#table", {
-            data:tabledata, //assign data to table
-            layout:"fitColumns",
-            tooltips:true,            //show tool tips on cell
-            addRowPos:"top",          //when adding a new row, add it to the top of the table
-            history:true,             //allow undo and redo actions on the table
-            movableColumns:true,      //allow column order to be changed
-            printAsHtml:true, //enable html table printing
-            printHeader:`<h2>Product ${data.productID} report<h1>`,
-            columns: columns_config,
-            validationMode:"highlight"
+          data: tabledata, //assign data to table
+          layout: "fitColumns",
+          tooltips: true,            //show tool tips on cell
+          addRowPos: "top",          //when adding a new row, add it to the top of the table
+          history: true,             //allow undo and redo actions on the table
+          movableColumns: true,      //allow column order to be changed
+          printAsHtml: true, //enable html table printing
+          printHeader: `<h2>Product ${data.productID} report<h1>`,
+          columns: columns_config,
+          validationMode: "highlight"
         });
-    })
+      })
 
     //trigger download of data.xlsx file
-    document.getElementById("download-xlsx").addEventListener("click", function(){
-        table.download("xlsx", "data.xlsx", {sheetName:`product ${id} report`});
+    document.getElementById("download-xlsx").addEventListener("click", function () {
+      table.download("xlsx", "data.xlsx", { sheetName: `product ${id} report` });
     });
 
     //trigger download of data.pdf file
-    document.getElementById("download-pdf").addEventListener("click", function(){
-        table.download("pdf", "data.pdf", {
-            orientation:"portrait", //set page orientation to portrait
-            title:`Product ${id} Report`, //add title to report
-        });
+    document.getElementById("download-pdf").addEventListener("click", function () {
+      table.download("pdf", "data.pdf", {
+        orientation: "portrait", //set page orientation to portrait
+        title: `Product ${id} Report`, //add title to report
+      });
     });
 
+    // for doing timeline
+
+
+    //=======================Function part========================================
     // for makeAlert
     function makeAlert(type, title) {
       Swal.fire({
@@ -128,12 +150,11 @@
       })
     }
 
-    // function part
     async function updateData() {
       product.procedures = table.getData()
 
       console.log(table.validate())
-      
+
       if (table.validate() == true) {
         const response = await fetch("http://localhost:8080/api/ledger/updateProduct", {
           method: 'PUT',
@@ -147,7 +168,14 @@
       } else {
         makeAlert("error", "Wrong data type")
       }
+    }
 
+    async function deleteData() {
+      const response = await fetch(`http://localhost:8080/api/ledger/deleteValueByKey?id=${product.productID}`, {
+          method: 'DELETE',
+        })
+        if (response.status == 200) makeAlert("success", "Delete Sucess")
+        else makeAlert("error", "Delete error")
     }
   </script>
 </body>
