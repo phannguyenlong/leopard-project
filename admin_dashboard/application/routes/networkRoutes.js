@@ -82,11 +82,11 @@
      for(let i=0;i<allNames.length;i++){
          if(String(allNames[i]).slice(1,5) == "peer"){
              var element = {}
-             element["state"] = allStates[i]
+             element["state"] = allStates[i].slice(1, allStates[i].length-1)
              dataPort = String(allPorts[i]).split(",")
-             element["peer_port"] = dataPort[0]
-             element["operation_port"] = dataPort[dataPort.length -2]
-             result[allNames[i]] =element
+             element["peer_port"] = dataPort[0].slice(1,dataPort[0].length)
+             element["operation_port"] = dataPort[dataPort.length -2].slice(1,dataPort[dataPort.length -2].length)
+             result[allNames[i].slice(1,allNames[i].length -1)] =element
  
          }
      }
