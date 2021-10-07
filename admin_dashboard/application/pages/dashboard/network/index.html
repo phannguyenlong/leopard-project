@@ -1,7 +1,10 @@
 <head>
-  <title>Admin Dashboard</title>
+  <title>Admin Dashboard | Network Status</title>
   <link rel="stylesheet" href="../../css/dashboard.css" />
   <link rel="stylesheet" href="./index.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <!--script src="networkStats.js" async></script-->
+  <script src="peerStatus.js" async></script>
 </head>
 <body>
   <div id="header">
@@ -28,8 +31,77 @@
         </div>
       </a>
     </div class="sidebarContent">
-    <div id="contentContainer">
-      <h1>Welcome to dashboard</h1>
+
+    <!------------------------------------------------------------------------------------------------------------------------------>
+    <div id="contentContainer" class="contents">
+      <section class="sectionContainer">
+          <div class="headerButtContainer">
+              <strong class="sectionHeader">Peer Status</strong>
+              <button type="button" class="positiveButton">Turn on/off</button>
+          </div>
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>IP address</th>
+                      <th>Status</th>
+                  </tr>
+              </thead>
+              <tbody class="tableContent" id="NetworkStatus">
+                  <tr>
+                      <td>1</td>
+                      <td>Peer 1</td>
+                      <td>127.0.0.1:5798</td>
+                      <td class="activeStatus">Active</td>
+                      <td><button type="button" class="utilButton">More details</button></td>
+                  </tr>
+                  <tr>
+                      <td>2</td>
+                      <td>Peer 2</td>
+                      <td>127.0.0.1:5798</td>
+                      <td class="activeStatus">Active</td>
+                      <td><button type="button" class="utilButton">More details</button></td>
+                  </tr>
+              </tbody>
+          </table>
+      </section>
+      
+      <section class="sectionContainer">
+          <div class="headerButtContainer">
+              <strong class="sectionHeader">Organizations</strong>
+              <button type="button" class="positiveButton">Turn on/off</button>
+          </div>
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Admin</th>
+                  </tr>
+              </thead>
+
+              <tbody class="tableContent" id="OrgStatus">
+                  <tr>
+                      <td>1</td>
+                      <td>Company 1</td>
+                      <td>admin1</td>
+                      <td><button type="button" class="negativeButton">Kick</button></td>
+                      <td><button type="button" class="utilButton">More details</button></td>
+                  </tr>
+                  
+                  <tr>
+                      <td>2</td>
+                      <td>Company 2</td>
+                      <td>admin2</td>
+                      <td><button type="button" class="negativeButton">Kick</button></td>
+                      <td><button type="button" class="utilButton">More details</button></td>
+                  </tr>
+              </tbody>
+          </table>
+      </section>
+      <!------------------------------------------------------------------------------------------------------------------------------>
+      
     </div>
   </div>
   <script>
