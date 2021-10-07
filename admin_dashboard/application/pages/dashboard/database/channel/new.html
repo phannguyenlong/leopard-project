@@ -65,6 +65,7 @@
   </div>
   <script>
     //============================Init part===============================
+    let channeName = (new URL(window.location.href)).searchParams.get("channelName");
     // Check Auth
     fetch("http://localhost:8080/api/auth/").then(res => {
       if (res.status != 200) {
@@ -116,7 +117,7 @@
         product.procedures = table.getData()
         product.numberOfProcedure = product.procedures.length
         
-        const response = await fetch("http://localhost:8080/api/ledger/addData", {
+        const response = await fetch(`http://localhost:8080/api/ledger/${channeName}/addData`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -125,7 +126,7 @@
         })
         if (response.status == 200) {
           // redirect
-          window.location.href = "/dashboard/database/channel/detail.html?id=" + product.productID;
+          window.location.href = `/dashboard/database/channel/detail.html?id=${product.productID}&channelName=${channeName}`;
         }
         else makeAlert("error", "Update error: " + response.statusText)
         console.log(response)

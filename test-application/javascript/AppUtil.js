@@ -42,6 +42,27 @@ exports.buildCCPOrg2 = () => {
 	return ccp;
 };
 
+/**
+ * This is for getting the common connection-profile file for speicific orgianizatio
+ */
+exports.buildCCPOrg = (organizaiton) => {
+	// normalize the organization name
+	organizaiton = organizaiton.replace(" ", ".").toLowerCase()
+	// load the common connection configuration file
+	const ccpPath = path.resolve(__dirname, '..', '..', 'test-network', 'organizations', 'peerOrganizations', `${organizaiton}.example.com`, `connection-${organizaiton}.json`);
+	const fileExists = fs.existsSync(ccpPath);
+	if (!fileExists) {
+		throw new Error(`no such file or directory: ${ccpPath}`);
+	}
+	const contents = fs.readFileSync(ccpPath, 'utf8');
+
+	// build a JSON object from the file contents
+	const ccp = JSON.parse(contents);
+
+	console.log(`Loaded the network configuration located at ${ccpPath}`);
+	return ccp;
+};
+
 exports.buildWallet = async (Wallets, walletPath) => {
 	// Create a new  wallet : Note that wallet is for managing identities.
 	let wallet;

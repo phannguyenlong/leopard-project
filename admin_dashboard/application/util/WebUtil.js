@@ -15,6 +15,8 @@ const walletPath = path.join(__dirname, '../wallet');
 const channelName = 'mychannel';
 const org1UserId = 'admin';
 
+let loginUser = {} // object for holding all logged in user to channel
+
 exports.createContract = async function (gateway, chaincodeName, indentity) {
      //================ set up part =============
     // build connection profile, which is org1
@@ -41,7 +43,7 @@ exports.createContract = async function (gateway, chaincodeName, indentity) {
 
 exports.validateSchema = async function (object) {
     const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
-    let file = fs.readFileSync("../../server-config/mychannel_schema.json")
+    let file = fs.readFileSync("../server-config/mychannel_schema.json")
     const validate = ajv.compile(JSON.parse(file))
 
     return validate(object)
@@ -52,4 +54,12 @@ exports.generateFakeObject = function () {
     jsf.option({ alwaysFakeOptionals: true, maxItems: 1 }) // fill up all field
     let object = jsf.generate(JSON.parse(file.toString()))
     return object
+}
+
+/**
+ * This function is use for shareing loginUser array between routes
+ * @returns list of all logged user to the server atm
+ */
+exports.getLoginUser = function () {
+    return loginUser
 }

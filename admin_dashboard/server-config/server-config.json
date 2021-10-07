@@ -1,0 +1,19 @@
+{
+    "rootAdmins": ["admin"],
+    "channels": {
+        "mychannel": [
+            {
+                "id": "admin",
+                "organization": "org1"
+            },
+            {
+                "id": "account1",
+                "organization": "org1"
+            },
+            {
+                "id": "account2",
+                "organization": "org2"
+            }
+        ]
+    }
+}
