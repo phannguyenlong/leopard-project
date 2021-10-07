@@ -32,7 +32,7 @@ async function main() {
         // const contract = network.getContract("assembly_line")
         const contract = await user.createContact(gateway, "assembly_line", "admin", "mychannel")
 
-        let result = await contract.submitTransaction('GetAllProduct');
+        let result = await contract.submitTransaction('InitLedger');
         console.log(JSON.parse(result.toString()))
     } catch (err) {
         console.log(err)
