@@ -82,11 +82,19 @@
      for(let i=0;i<allNames.length;i++){
          if(String(allNames[i]).slice(1,5) == "peer"){
              var element = {}
+             console.log(allStates[i].slice(1, allStates[i].length-1))
              element["state"] = allStates[i].slice(1, allStates[i].length-1)
-             dataPort = String(allPorts[i]).split(",")
-             element["peer_port"] = dataPort[0].slice(1,dataPort[0].length)
-             element["operation_port"] = dataPort[dataPort.length -2].slice(1,dataPort[dataPort.length -2].length)
+             if(allStates[i].slice(1, allStates[i].length-1) !=="exited"){
+                dataPort = String(allPorts[i]).split(",")
+                element["peer_port"] = dataPort[0].slice(1,dataPort[0].length)
+                element["operation_port"] = dataPort[dataPort.length -2].slice(1,dataPort[dataPort.length -2].length)
+             }
+             else{
+                element["peer_port"] = "N/a"
+                element["operation_port"] = "N/a"
+             }
              result[allNames[i].slice(1,allNames[i].length -1)] =element
+
  
          }
      }
