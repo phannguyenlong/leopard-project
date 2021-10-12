@@ -116,7 +116,7 @@ module.exports.creatPeerAndCA =  async function creatPeerAndCA(peer) {
     // run shell
     let username = peer.caAdmin
     let password = peer.caPassword
-    shell.env["PATH"] = UTIL_PATH + "/../../bin/:" + shell.env["PATH"] // set env
+    shell.env["PATH"] = UTIL_PATH + "/../../../bin/:" + shell.env["PATH"] // set env
     shell.exec(`bash -c 'cd ${NETWORK_PATH}/scripts; ./upPeerAndCA.sh ${organization} ${username} ${password} ${peer.caPort} peer${username} peer${password} ${channel}; cd ${UTIL_PATH}; pwd'`)
     chdir(UTIL_PATH) // then set it again to prevent error
 }
@@ -201,7 +201,7 @@ module.exports.createOrdererAndCA = async function createOrdererAndCA(orderer) {
     fs.writeFileSync(filePath + `/orderer-compose-${organization}.yaml`, yaml.dump(yamlFile, { lineWidth: -1 }))
 
     // run shell
-    shell.env["PATH"] =  UTIL_PATH + "/../../bin/:" + shell.env["PATH"] // commennt this if alread set env
+    shell.env["PATH"] =  UTIL_PATH + "/../../../bin/:" + shell.env["PATH"] // commennt this if alread set env
     shell.exec(`bash -c 'cd ${NETWORK_PATH}/scripts; ./upOrdererAndCA.sh ${organization} ${orderer.caAdmin} ${orderer.caPassword} ${orderer.caPort} ${orderer.ordererAdmin} ${orderer.ordererPassword} ${channel}; cd ${UTIL_PATH}; pwd'`)
     chdir(UTIL_PATH) // then set it again to prevent error
 }

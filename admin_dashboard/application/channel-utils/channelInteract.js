@@ -86,7 +86,7 @@ module.exports.createChannel = async function createChannel(channel) {
     fs.writeFileSync(filePath + "/configtx.yaml", yaml.dump(configYamlFile, { lineWidth: -1 }))
 
     // run shell
-    shell.env["PATH"] = UTIL_PATH + "/../../bin/:" + shell.env["PATH"] // commennt this if already set env
+    shell.env["PATH"] = UTIL_PATH + "/../../../bin/:" + shell.env["PATH"] // commennt this if already set env
     shell.exec(`bash -c 'cd ${NETWORK_PATH}/scripts; ./setupChannel.sh ${orderer.getNormalizeOrg} ${orderer.ordererPort} ${orderer.getNormalizeChannel} ${peerOrgName}; cd ${UTIL_PATH}; pwd'`)
     chdir(UTIL_PATH) // then set it again to prevent error
 }
