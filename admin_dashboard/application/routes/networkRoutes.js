@@ -11,8 +11,6 @@
  
  router.get('/getChannelStatus', async function (req, res) {
  
-     console.log("-----------------------")
-     console.log("Channel Statuses")
      channelStatuses = []
      namesChannel = glob.sync("../../test-network/log/channels/*")
      var json;
@@ -31,8 +29,6 @@
          //console.log(json);
          channelStatuses.push(json);
      } 
-     console.log(channelStatuses)
- 
      res.json(channelStatuses);
          
      
@@ -44,7 +40,6 @@
      try {
      const data = fs.readFileSync('../../test-network/log/network_config.log', 'utf8').split("\n")
      var result = {}
-     console.log(data)
      var org = []
      for(let i=0;i<data.length-1;i++){
          json = JSON.parse(data[i])
@@ -55,7 +50,6 @@
          }
          
      }
-     console.log(org)
      result['channel'] = req.query.channel
      result["Org"] = org
      // result = JSON.stringify(result)

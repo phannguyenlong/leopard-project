@@ -6,11 +6,12 @@ const express = require("express")
 const router = express.Router()
 
 const { Gateway } = require('fabric-network');
-const { createContract, validateSchema, generateFakeObject } = require('../util/WebUtil.js');
+const {User} = require("../util/User")
+const { createContract, validateSchema, generateFakeObject, getLoginUser } = require('../util/WebUtil.js');
 const chaincodeName = "assembly_line"
 
 // GET /api/ledger/queryAll
-router.get('/queryAll', async function (req, res) {
+router.get('/:channelName/queryAll', async function (req, res) {
     const gateway = new Gateway()
 
     try {
@@ -30,19 +31,14 @@ router.get('/queryAll', async function (req, res) {
 })
 
 // GET /api/ledger/queryByKey
-router.get("/queryByKey", async function (req, res) {
+router.get("/:channelName/queryByKey", async function (req, res) {
     const gateway = new Gateway()
-    let key = req.query.id // get param from request
-    let queryString = {
-      selector: {
-        _id: {
-          $regex: key, // put the key here to query
-        },
-      }, 
-    };
+    let user = getLoginUser()[req.cookies.session]
+    let channelName = req.params.channelName // get channelName
+    let queryString = {selector: {_id: { $regex: req.query.id}}}; // get key from params
     try {
         // get contract from the network
-        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+        const contract = await user.createContact(gateway, chaincodeName, req.cookies.session, channelName)
 
         console.log("GET Asset by key")
         let data = await contract.evaluateTransaction('QuerryProduct', JSON.stringify(queryString)) // remember to convert to stirng pass
@@ -57,15 +53,14 @@ router.get("/queryByKey", async function (req, res) {
 })
 
 // GET /api/ledger/getData
-router.get("/getData", async function (req, res) {
+router.get("/:channelName/getData", async function (req, res) {
     const gateway = new Gateway()
-    let key = req.query.id // get param from request
-    let queryString = {
-      selector: { _id: key},
-    };
+    let user = getLoginUser()[req.cookies.session]
+    let channelName = req.params.channelName // get param from request
+    let queryString = { selector: { _id: req.query.id}}; // get param from request
     try {
         // get contract from the network
-        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+        const contract = await user.createContact(gateway, chaincodeName, req.cookies.session, channelName)
 
         console.log("GET Asset by key")
         let data = await contract.evaluateTransaction('QuerryProduct', JSON.stringify(queryString)) // remember to convert to stirng pass
@@ -81,12 +76,14 @@ router.get("/getData", async function (req, res) {
 
 
 // PUT /api/ledger/updateProduct
-router.put("/updateProduct", async function (req, res) {
+router.put("/:channelName/updateProduct", async function (req, res) {
     const gateway = new Gateway()
+    let user = getLoginUser()[req.cookies.session]
+    let channelName = req.params.channelName
     let data = req.body
     try {
         // get contract from the network
-        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+        const contract = await user.createContact(gateway, chaincodeName, req.cookies.session, channelName)
 
         console.log("Update Product")
         await contract.submitTransaction('UpdateProduct', JSON.stringify(data)) // remember to convert to stirng pass
@@ -101,13 +98,15 @@ router.put("/updateProduct", async function (req, res) {
 })
 
 // DELETE /api/ledger/DeleteValueByKey
-router.delete("/deleteValueByKey", async function (req, res) {
+router.delete("/:channelName/deleteValueByKey", async function (req, res) {
     const gateway = new Gateway()
+    let user = getLoginUser()[req.cookies.session]
+    let channelName = req.params.channelName
     let key = req.query.id // get param from request
 
     try {
         // get contract from the network
-        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+        const contract = await user.createContact(gateway, chaincodeName, req.cookies.session, channelName)
 
         console.log("DELETE Asset by key")
         await contract.submitTransaction('DeleteProduct', key) // remember to convert to stirng pass
@@ -122,13 +121,15 @@ router.delete("/deleteValueByKey", async function (req, res) {
 })
 
 // GET /api/ledger/GetProductHistory
-router.get("/getProductHistory", async function (req, res) {
+router.get("/:channelName/getProductHistory", async function (req, res) {
     const gateway = new Gateway()
+    let user = getLoginUser()[req.cookies.session]
+    let channelName = req.params.channelName
     let key = req.query.id // get param from request
    
     try {
         // get contract from the network
-        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+        const contract = await user.createContact(gateway, chaincodeName, req.cookies.session, channelName)
 
         console.log("GET Product history")
         let data = await contract.evaluateTransaction('GetProductHistory', key) // remember to convert to stirng pass
@@ -143,14 +144,16 @@ router.get("/getProductHistory", async function (req, res) {
 })
 
 // POST /api/ledger/addData
-router.post("/addData", async function (req, res) {
+router.post("/:channelName/addData", async function (req, res) {
     const gateway = new Gateway()
+    let user = getLoginUser()[req.cookies.session]
+    let channelName = req.params.channelName
     let data = req.body
     if (!validateSchema(data)) {
         res.status(500).send("Unvalid data type")
     }
     try {
-        const contract = await createContract(gateway, chaincodeName, req.cookies.session)
+        const contract = await user.createContact(gateway, chaincodeName, req.cookies.session, channelName)
         await contract.submitTransaction('createProduct', JSON.stringify(data))
         res.status(200).send('Data added successfully')
     } catch (err) {

@@ -88,10 +88,11 @@
 
     let product, table
     let id = (new URL(window.location.href)).searchParams.get("id");
+    let channeName = (new URL(window.location.href)).searchParams.get("channelName");
     document.getElementById("headerText").innerHTML = `${id}`
 
     // fetch data and constrcut table
-    fetch(`http://localhost:8080/api/ledger/getData?id=${id}`).then(res => res.json())
+    fetch(`http://localhost:8080/api/ledger/${channeName}/getData?id=${id}`).then(res => res.json())
       .then(data => {
         data = data[0].Record
         product = data
@@ -158,7 +159,7 @@
       product.numberOfProcedure = product.procedures.length
 
       if (table.validate() == true) {
-        const response = await fetch("http://localhost:8080/api/ledger/updateProduct", {
+        const response = await fetch(`http://localhost:8080/api/ledger/${channeName}/updateProduct`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -173,7 +174,7 @@
     }
 
     async function deleteData() {
-      const response = await fetch(`http://localhost:8080/api/ledger/deleteValueByKey?id=${product.productID}`, {
+      const response = await fetch(`http://localhost:8080/api/ledger/${channeName}/deleteValueByKey?id=${product.productID}`, {
           method: 'DELETE',
         })
         if (response.status == 200) makeAlert("success", "Delete Sucess")

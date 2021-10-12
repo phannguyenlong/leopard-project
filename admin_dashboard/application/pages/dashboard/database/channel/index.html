@@ -34,7 +34,7 @@
         <input id="searchBar" placeholder="ID" onkeydown="search(this)" />
         <button class="btn newBtn">
           <img src="../../../asset/images/new.svg" width="20px"/>
-          <a href="new.html">New</a>
+          <a id="newBtn">New</a>
         </button>
       </div>
       <div id="resultContainer"></div>
@@ -50,13 +50,14 @@
     })
 
     let channelName = (new URL(window.location.href)).searchParams.get("channelName");
+    document.getElementById("newBtn").href = `new.html?channelName=${channelName}`
     // console.log(channelName)
     document.getElementById("headerText").innerHTML= `${channelName} Database`
 
     // Fetch data
     function getData(queryString) {
         document.getElementById("resultContainer").innerHTML= ''
-        fetch(`http://localhost:8080/api/ledger/queryByKey?id=${queryString}`).then(res => res.json())
+        fetch(`http://localhost:8080/api/ledger/${channelName}/queryByKey?id=${queryString}`).then(res => res.json())
         .then(datas => {
             for (let i = 0; i < datas.length; i++) {
                 product = datas[i].Record
@@ -66,7 +67,7 @@
                         <div style="display: flex">
                             <button class="btn newBtn" onClick="deleteData('${product.productID}')" style="width: 80px; background-color: #FF4B46">Delete</button>
                             <button class="btn newBtn" style="width: 150px;">
-                              <a href="detail.html?id=${product.productID}">More Detail</a>
+                              <a href="detail.html?id=${product.productID}&channelName=${channelName}">More Detail</a>
                               <img src="../../../asset/images/goto.svg" width="20px" />
                             </button>
                         <div>
@@ -95,7 +96,7 @@
 
     // Delete data
     async function deleteData(id) {
-      const response = await fetch(`http://localhost:8080/api/ledger/deleteValueByKey?id=${id}`, {
+      const response = await fetch(`http://localhost:8080/api/ledger/${channelName}/deleteValueByKey?id=${id}`, {
           method: 'DELETE',
         })
         if (response.status == 200) makeAlert("success", "Delete Sucess")
