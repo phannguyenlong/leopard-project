@@ -1,0 +1,85 @@
+version: "3.7" # use docker verion 3.7
+
+volumes: {} # for not to be null
+
+# config network
+networks:
+  nft-network: # name of the network container will run in
+    name: nft-network
+
+# config services
+services:
+  ca.server: # config for TLS CA server
+    image: hyperledger/fabric-ca:latest # latest farbic ca
+    labels:
+      service: hyperledger-fabric
+    environment: # dont need to set enviroment, will set in config file
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      # - FABRIC_CA_SERVER_PORT=7054
+      # - FABRIC_CA_SERVER_OPERATIONS_LISTENADDRESS=0.0.0.0:17054
+      # - FABRIC_CA_SERVER_CA_NAME=ca-org1
+    ports: # running port
+      - "7054:7054"
+      - "17054:17054"
+    command: sh -c 'fabric-ca-server start' # command to run when initial
+    volumes:
+      - ../organizations/fabric-ca-server/tls-ca:/etc/hyperledger/fabric-ca-server # path to store ca config
+    networks:
+      - nft-network # run in config network
+
+  peer.server:
+    container_name: peer0.org1
+    image: hyperledger/fabric-peer:latest
+    labels:
+      service: hyperledger-fabric
+    environment:
+      #Generic peer variables
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO 
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_PROFILE_ENABLED=false
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      
+      # Peer specific variables
+      # - CORE_PEER_ID=peer0.org1
+      # - CORE_PEER_ADDRESS=localhost:7051
+      # - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      # - CORE_PEER_CHAINCODEADDRESS=localhost:7052
+      # - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      # - CORE_PEER_GOSSIP_BOOTSTRAP=localhost:7051
+      # - CORE_PEER_GOSSIP_EXTERNALENDPOINT=localhost:7051
+      # - CORE_PEER_LOCALMSPID=org1
+      # - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:17051
+      # - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp/user/admin/msp # don't need this
+    volumes:
+        - /var/run/docker.sock:/host/var/run/docker.sock
+        # - ../organizations/peerOrganizations/org1/peers/peer0/msp:/etc/hyperledger/fabric/msp
+        # - ../organizations/peerOrganizations/org1/peers/peer0/tls:/etc/hyperledger/fabric/tls
+        # - peer0.org1.com:/var/hyperledger/production
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    ports:
+      - 7051:7051
+      - 17051:17051
+    networks:
+      - nft-network
+
+  couchdb:
+    container_name: couchdb0
+    image: couchdb:3.1.1
+    labels:
+      service: hyperledger-fabric
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+      # - COUCHDB_USER=admin
+      # - COUCHDB_PASSWORD=adminpw
+    # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+    # for example map it to utilize Fauxton User Interface in dev environments.
+    ports:
+      - "5984:5984"
+    networks:
+      - nft-network

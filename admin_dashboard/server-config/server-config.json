@@ -1,5 +1,5 @@
 {
-    "rootAdmins": ["admin"],
+    "rootAdmins": ["rootAdmin"],
     "channels": {
         "mychannel": [
             {
