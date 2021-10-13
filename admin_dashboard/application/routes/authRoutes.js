@@ -35,12 +35,13 @@ router.get("/", async function (req, res) {
 router.post('/login', async function (req, res) {
     let hash;
     try {
-        let user = new User(req.body.username)
-        await user.buildUser()
+        let user = new User()
+        // await user.buildUser()
         // creat hash
         hash = crypto.createHmac('sha256', SECRET_KEY).update(req.body.username).digest('hex');
-
-        await user.enrollUser(req.body.username, req.body.password, hash)
+        
+        let validate = await user.enrollUser(req.body.username, req.body.password, hash)
+        if (!validate) throw new Error("User not found")
 
         getLoginUser()[hash] = user
 

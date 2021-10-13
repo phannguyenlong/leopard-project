@@ -116,7 +116,7 @@ module.exports.creatPeerAndCA =  async function creatPeerAndCA(peer) {
     let username = peer.caAdmin
     let password = peer.caPassword
     shell.env["PATH"] = UTIL_PATH + "/../../../bin/:" + shell.env["PATH"] // set env
-    shell.exec(`bash -c 'cd ${NETWORK_PATH}/scripts; ./upPeerAndCA.sh ${organization} ${username} ${password} ${peer.caPort} peer${username} peer${password} ${channel}; cd ${UTIL_PATH}; pwd'`)
+    shell.exec(`bash -c 'cd ${NETWORK_PATH}/scripts; ./upPeerAndCA.sh ${organization} ${username} ${password} ${peer.caPort} ${peer.peerAdmin} peer${peer.peerPassword} ${channel}; cd ${UTIL_PATH}; pwd'`)
     chdir(UTIL_PATH) // then set it again to prevent error
 
     await generateCCPforOrg(peer.getNormalizeOrg, peer.peerPort, peer.caPort, peer.getNormalizeChannel)

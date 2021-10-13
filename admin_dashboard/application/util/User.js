@@ -11,73 +11,62 @@ const fs = require('fs');
 const path = require('path');
 const { Wallets } = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
-const { buildCCPOrg, buildWallet } = require("../../../test-application/javascript/AppUtil")
-const { enrollUser } = require('../../../test-application/javascript/CAUtil.js');
+const {buildCCPOrg, buildWallet} = require("../util/AppUtils")
+const { enrollUser } = require('../util/CAUtils');
 
 const WalletDir = path.join(__dirname, "../wallet/")
 const SERVER_CONFIG =  path.join(__dirname, "../../server-config/server-config.json")
 
 class User {
-    constructor(username) {
-        // TODO: add LFI prevention here
-        this.username = username
-        this.wallets = {} // list of wallet that map with channelName (e.g {channelName: wallet})
-    }
+    constructor() {}
 
-    async buildUser() {
+    async enrollUser(usernanme, password, label) {
         let file = fs.readFileSync(SERVER_CONFIG)
         let serverConfig = JSON.parse(file.toString())
+        this.username = usernanme
 
         // check if admin or not
-        this.isAdmin = serverConfig.rootAdmins.includes(this.username)
-        // get list of channel
+        // this.isRootAdmin = serverConfig.rootAdmins.includes(this.username)
+        for (let i = 0; i < serverConfig.rootAdmins; i++) {
+            if (this.username === serverConfig.rootAdmins[i].username && password === serverConfig.rootAdmins[i].password ) {
+                this.isRootAdmin = true;
+                return true; // if root admin dont do other thing
+            }
+        }
+        
+        // get channel name
         for (let channel in serverConfig.channels) {
-            let accounts = serverConfig.channels[channel]
-            for (let i = 0; i < accounts.length; i++) {
-                if (accounts[i].id === this.username) {
-                    this.organization = accounts[i].organization
-                        .replace(" ", ".")
-                        .toLowerCase(); // normalize
-                    
-                    // build wallet
-                    this.wallets[channel] = await buildWallet(Wallets, WalletDir + channel)
+            let peers = serverConfig.channels[channel].peers
+            for (let i = 0; i < peers.length; i++) {
+                if (this.username === peers[i].caAdmin) {
+                    this.channelName = channel
+                    this.wallet = await buildWallet(Wallets, WalletDir + channel)
+                    this.organization = peers[i].orgName
                 }
+                break;
             }
         }
 
         // build other datas
-        if (Object.keys(this.wallets).length > 0) {
-            this.ccp = buildCCPOrg(this.organization)
+        if (this.wallet) {
+            this.ccp = buildCCPOrg(this.organization, this.channelName)
             this.orgConfig =
-                this.ccp.organizations[
-                Object.keys(this.ccp.organizations).find(
-                    (key) => key.toLowerCase() === this.organization.toLowerCase()
-                )
-                ];
+                this.ccp.organizations[this.organization.toLowerCase().replace(" ", ".")];
+            // enrroll user here
+            await enrollUser(this.getCAClient, this.wallet, this.orgConfig.mspid, usernanme, password, label)
+            return true
         }
-    }
-
-    // will enroll indentity of user to all wallet that user belong to
-    async enrollUser(usernanme, password, label) {
-        for (let channel in this.wallets) {
-            await enrollUser(this.getCAClient, this.wallets[channel], this.orgConfig.mspid, usernanme, password, label)
-        }
+        return false
     }
 
     async unEnrollUser(session) {
-        for (let channel in this.wallets) {
-            this.wallets[channel].remove(session)
-        }
-    }
-
-    async getWallet(channelName) {
-        return this.wallets[channelName]
+        this.wallet.remove(session)
     }
 
     async createContact(gateway, chaincodeName, session, channelName) {
         try {
             await gateway.connect(this.ccp, {
-                wallet: this.wallets[channelName],
+                wallet: this.wallet,
                 identity: session,
                 discovery: {enabled: true, asLocalhost: true}
             })
@@ -99,6 +88,7 @@ class User {
     }
 
     get getCAClient() {
+        console.log(this.orgConfig)
         let ca = this.orgConfig.certificateAuthorities[0]
     	const caInfo = this.ccp.certificateAuthorities[ca]; //lookup CA details from config
         const caTLSCACerts = caInfo.tlsCACerts.pem;

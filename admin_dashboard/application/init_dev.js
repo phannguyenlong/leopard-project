@@ -8,25 +8,25 @@ async function init() {
     user = new User("admin")
     await user.buildUser()
 
-    console.log(user.wallets)
+    console.log(user.wallet)
 
     await user.enrollUser('admin', 'password', 'admin')
 }
 
 async function main() {
     user = new User("admin")
-    await user.buildUser()
+    // await user.buildUser()
     await user.enrollUser('admin', 'password', 'admin')
 
     const gateway = new Gateway()
 
     try {
-        let wallet = await user.getWallet('channel1')
-        await gateway.connect(user.ccp, {
-            wallet: wallet,
-            identity: 'admin', // this should be session
-            discovery: {enabled: true, asLocalhost: true}
-        })
+        // let wallet = await user.getWallet('channel1')
+        // await gateway.connect(user.ccp, {
+        //     wallet: wallet,
+        //     identity: 'admin', // this should be session
+        //     discovery: {enabled: true, asLocalhost: true}
+        // })
 
         // const network = await gateway.getNetwork('channel1') // must input
         // console.log(network)

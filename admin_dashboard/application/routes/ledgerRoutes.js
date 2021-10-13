@@ -8,7 +8,7 @@ const router = express.Router()
 const { Gateway } = require('fabric-network');
 const {User} = require("../util/User")
 const { createContract, validateSchema, generateFakeObject, getLoginUser } = require('../util/WebUtil.js');
-const chaincodeName = "assembly_line"
+const chaincodeName = "assemly_line"
 
 // GET /api/ledger/queryAll
 router.get('/:channelName/queryAll', async function (req, res) {

@@ -7,8 +7,8 @@ async function main() {
     // create mock orderer and ca
     let orderer = new OrdererOrganization("Company C", 'ordererAdmin', 'ordererPassword', 'admin', 'password', 'channel1', 8054)
     let peers = [
-        new PeerOrganization("Company A", 'admin', 'password', 'admin', 'password', 'channel1', 6054),
-        new PeerOrganization("Company B", 'admin', 'password', 'admin', 'password', 'channel1', 7054)
+        new PeerOrganization("Company A", 'adminA', 'passwordA', 'peerAdminA', 'peerPasswordA', 'channel1', 6054),
+        new PeerOrganization("Company B", 'adminB', 'passwordB', 'peerAdminB', 'peerPasswordB', 'channel1', 7054)
     ]
     let channel1 = new Channel("channel1", orderer, peers)
 
