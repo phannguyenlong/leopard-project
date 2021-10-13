@@ -18,10 +18,9 @@ async function main() {
     for (let i = 0; i < peers.length; i++) {
         await creatPeerAndCA(peers[i])
     }
-
+    
     // join channel
     await createChannel(channel1)
-
     // create another channel code
 
     // let orderer2 = new OrdererOrganization("Company E", 'ordererAdmin', 'ordererPassword', 'admin', 'password', 'channel2', 8064)

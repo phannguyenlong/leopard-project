@@ -5,9 +5,8 @@ const path = require("path");
 const { chdir, cwd } = require('process');
 var glob = require("glob")
 
-exports.deployCC = deployCC
 
-async function deployCC(channelName,ccpath){
+module.exports.deployCC = async function deployCC(channelName,ccpath){
     shell.env["PATH"] =  __dirname + "/../../../bin/:" + shell.env["PATH"] // commennt this if alread set env
     shell.env["FABRIC_CFG_PATH"] = __dirname+"/../../../config/"
     console.log("-------Package Chaincode----------")
@@ -150,4 +149,4 @@ async function setEnv(channelName, file){
 async function main(){
     await deployCC("channel1","admin_dashboard/chaincode/admin-chaincode")
 }
-main()
+// main()
