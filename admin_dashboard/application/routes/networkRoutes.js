@@ -23,6 +23,12 @@
     console.log(output)
     res.json(output);
  })
+
+ router.get('/showChannelDetail',async function(req,res){
+    var requestChannel = req.query.channel_name
+    let file = require("../../server-config/server-config.json")
+    console.log(file["channels"][requestChannel])
+ })
  
  router.get('/getChannelStatus', async function (req, res) {
     console.log("Channel Status")

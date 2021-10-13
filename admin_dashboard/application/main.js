@@ -23,6 +23,7 @@ async function main() {
     // join channel
     await createChannel(channel1)
     await deployCC('channel1',"admin_dashboard/chaincode/admin-chaincode")
+
 }
 
 main()

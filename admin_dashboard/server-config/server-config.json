@@ -1,6 +1,9 @@
 {
     "rootAdmins": [
-        {"username": "rootAdmin", "password": "password"}
+        {
+            "username": "rootAdmin",
+            "password": "password"
+        }
     ],
     "channels": {
         "channel1": {
@@ -22,13 +25,13 @@
             "peers": [
                 {
                     "orgName": "Company A",
-                    "caAdmin": "admin",
-                    "caPassword": "password",
+                    "caAdmin": "adminA",
+                    "caPassword": "passwordA",
                     "channelName": "channel1",
                     "caPort": 6054,
                     "caOperationPort": "16054",
-                    "peerAdmin": "peerAdmin",
-                    "peerPassword": "peerPassword",
+                    "peerAdmin": "peerAdminA",
+                    "peerPassword": "peerPasswordA",
                     "peerPort": 6055,
                     "peerOperationPort": "16055",
                     "chainCodePort": 6056,
@@ -37,13 +40,13 @@
                 },
                 {
                     "orgName": "Company B",
-                    "caAdmin": "admin",
-                    "caPassword": "password",
+                    "caAdmin": "adminB",
+                    "caPassword": "passwordB",
                     "channelName": "channel1",
                     "caPort": 7054,
                     "caOperationPort": "17054",
-                    "peerAdmin": "peerAdmin",
-                    "peerPassword": "peerPassword",
+                    "peerAdmin": "peerAdminB",
+                    "peerPassword": "peerPasswordB",
                     "peerPort": 7055,
                     "peerOperationPort": "17055",
                     "chainCodePort": 7056,
