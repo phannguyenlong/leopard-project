@@ -8,9 +8,24 @@
  var glob = require("glob")
  const fs = require("fs")
  const { spawn } = require('child_process');
+
+ router.get('/getAllChannelName',async function(req,res){
+    console.log("Call ");
+    var namesChannels = glob.sync("../../leopard-network/docker/*")
+    var output=[]
+    for(let i=0;i<namesChannels.length;i++){
+        let channel_name = namesChannels[i].split("/")
+        let channel = {}
+        channel["index"]=i+1
+        channel["channel_name"] = channel_name[channel_name.length-1]
+        output.push(channel)
+    }
+    console.log(output)
+    res.json(output);
+ })
  
  router.get('/getChannelStatus', async function (req, res) {
- 
+    console.log("Channel Status")
      channelStatuses = []
      namesChannel = glob.sync("../../test-network/log/channels/*")
      var json;
