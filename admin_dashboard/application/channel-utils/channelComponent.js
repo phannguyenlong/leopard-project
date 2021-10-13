@@ -112,13 +112,14 @@ module.exports.creatPeerAndCA =  async function creatPeerAndCA(peer) {
     }
     fs.writeFileSync(filePath + `/ca_peer-compose-${organization}.yaml`, yaml.dump(yamlFile, { lineWidth: -1 }))
 
-
     // run shell
     let username = peer.caAdmin
     let password = peer.caPassword
     shell.env["PATH"] = UTIL_PATH + "/../../../bin/:" + shell.env["PATH"] // set env
     shell.exec(`bash -c 'cd ${NETWORK_PATH}/scripts; ./upPeerAndCA.sh ${organization} ${username} ${password} ${peer.caPort} peer${username} peer${password} ${channel}; cd ${UTIL_PATH}; pwd'`)
     chdir(UTIL_PATH) // then set it again to prevent error
+
+    await generateCCPforOrg(peer.getNormalizeOrg, peer.peerPort, peer.caPort, peer.getNormalizeChannel)
 }
 
 /**
@@ -206,19 +207,23 @@ module.exports.createOrdererAndCA = async function createOrdererAndCA(orderer) {
     chdir(UTIL_PATH) // then set it again to prevent error
 }
 
-async function generateCCPforOrg(organization, peerPort, caPort) {
+function generateCCPforOrg(organization, peerPort, caPort, channel) {
     organization = organization.replace(" ", ".").toLowerCase(); // normalize data
 
-    let file = fs.readFileSync("../leopard-network/sample/ccp-template.json")
+    let file = fs.readFileSync( NETWORK_PATH + "/sample/ccp-template.json")
     let ccp = JSON.parse(file.toString())
+    let tlsCACerts = fs.readFileSync(NETWORK_PATH + `/organizations/${channel}/peerOrganizations/${organization}/msp/tlscacerts/tls-localhost-${caPort}-ca-${organization.replace(".", "-")}.pem`).toString()
 
-    // config Client
+    // console.log(tlsCACerts)
+
+    // general config
     ccp.client.organization = organization
+    ccp.name = `nft-network-${organization}`
 
     // config organizations
     ccp.organizations[`${organization}`] = {
         mspid: `${organization}.msp`,
-        peer: [`peer.${organization}`],
+        peers: [`peer.${organization}`],
         certificateAuthorities: [`ca.${organization}`]
     }
 
@@ -226,7 +231,7 @@ async function generateCCPforOrg(organization, peerPort, caPort) {
     ccp.peers[`peer.${organization}`] = {
         url: `grpcs://localhost:${peerPort}`,
         tlsCACerts: {
-            pem: "aaaaaaaaaaaaaaaaaaaa"
+            pem: tlsCACerts
         },
         grpcOptions: {
             "ssl-target-name-override": `peer.${organization}`,
@@ -239,12 +244,12 @@ async function generateCCPforOrg(organization, peerPort, caPort) {
         url: `https://localhost:${caPort}`,
         caName: `ca-${organization}`,
         tlsCACerts: {
-            pem: ["aaaaaaaaaaaaaaaaaaaaaaaa"]
+            pem: [tlsCACerts]
         },
         httpOptions: {
             verify: false
         }
     }
-
-    console.log(ccp)
+    // console.log(ccp.certificateAuthorities)
+    fs.writeFileSync(NETWORK_PATH + `/organizations/${channel}/peerOrganizations/${organization}/connection-${organization}.json`, JSON.stringify(ccp))
 }

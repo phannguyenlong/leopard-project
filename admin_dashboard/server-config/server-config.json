@@ -1,18 +1,10 @@
 {
     "rootAdmins": ["rootAdmin"],
     "channels": {
-        "mychannel": [
+        "channel1": [
             {
                 "id": "admin",
-                "organization": "org1"
-            },
-            {
-                "id": "account1",
-                "organization": "org1"
-            },
-            {
-                "id": "account2",
-                "organization": "org2"
+                "organization": "company.a"
             }
         ]
     }

@@ -3,3 +3,5 @@ channel-config
 docker
 channel-artifacts
 organizations
+log.txt
+info.txt

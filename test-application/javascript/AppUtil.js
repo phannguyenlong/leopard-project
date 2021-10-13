@@ -49,7 +49,7 @@ exports.buildCCPOrg = (organizaiton) => {
 	// normalize the organization name
 	organizaiton = organizaiton.replace(" ", ".").toLowerCase()
 	// load the common connection configuration file
-	const ccpPath = path.resolve(__dirname, '..', '..', 'test-network', 'organizations', 'peerOrganizations', `${organizaiton}.example.com`, `connection-${organizaiton}.json`);
+	const ccpPath = path.resolve(__dirname, '..', '..', 'leopard-network', 'organizations', "channel1" ,'peerOrganizations', `${organizaiton}`, `connection-${organizaiton}.json`);
 	const fileExists = fs.existsSync(ccpPath);
 	if (!fileExists) {
 		throw new Error(`no such file or directory: ${ccpPath}`);
