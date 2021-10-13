@@ -23,25 +23,6 @@ async function main() {
     // join channel
     await createChannel(channel1)
     await deployCC('channel1',"admin_dashboard/chaincode/admin-chaincode")
-    // create another channel code
-
-    // let orderer2 = new OrdererOrganization("Company E", 'ordererAdmin', 'ordererPassword', 'admin', 'password', 'channel2', 8064)
-    // let peers2 = [
-    //     new PeerOrganization("Company F", 'admin', 'password', 'admin', 'password', 'channel2', 6064),
-    //     new PeerOrganization("Company G", 'admin', 'password', 'admin', 'password', 'channel2', 7064)
-    // ]
-    // let channel2 = new Channel("channel2", orderer2, peers2)
-
-    // // create orderer
-    // await createOrdererAndCA(orderer2)
-
-    // // create peer
-    // for (let i = 0; i < peers2.length; i++) {
-    //     await creatPeerAndCA(peers2[i])
-    // }
-
-    // // join channel
-    // await createChannel(channel2)
 }
 
 main()

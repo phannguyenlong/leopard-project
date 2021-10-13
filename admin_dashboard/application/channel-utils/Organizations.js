@@ -1,3 +1,5 @@
+const fs = require("fs")
+
 class Organization {
     constructor(orgName, caAdmin, caPassword, channelName, caPort) {
         this.orgName = orgName
@@ -57,6 +59,17 @@ class Channel {
 
     set addPeer(peer) {
         this.peers.push(peer)
+    }
+    // use to save channel config to file
+    async exportConfig() {
+        let filePath = __dirname + "/../../server-config/server-config.json"
+        let configFile = JSON.parse(fs.readFileSync(filePath).toString())
+
+        // export current channel config to file
+        configFile.channels[this.channelName] = { ...this }
+
+        // save back to file
+        fs.writeFileSync(filePath, JSON.stringify(configFile, null, 4)) // null, 4 this for beauty
     }
 }
 
