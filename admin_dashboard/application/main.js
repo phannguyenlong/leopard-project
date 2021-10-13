@@ -1,5 +1,6 @@
 const { creatPeerAndCA, createOrdererAndCA } = require("./channel-utils/channelComponent")
 const {createChannel} = require("./channel-utils/channelInteract")
+const { deployCC } = require("./channel-utils/deployChaincode")
 const {PeerOrganization, OrdererOrganization, Channel} = require("./channel-utils/Organizations")
 
 async function main() {
@@ -18,9 +19,10 @@ async function main() {
     for (let i = 0; i < peers.length; i++) {
         await creatPeerAndCA(peers[i])
     }
-    
+
     // join channel
     await createChannel(channel1)
+    await deployCC('channel1',"admin_dashboard/chaincode/admin-chaincode")
     // create another channel code
 
     // let orderer2 = new OrdererOrganization("Company E", 'ordererAdmin', 'ordererPassword', 'admin', 'password', 'channel2', 8064)
