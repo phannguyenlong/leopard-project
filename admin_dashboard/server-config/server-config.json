@@ -1,0 +1,56 @@
+{
+    "rootAdmins": [
+        {"username": "rootAdmin", "password": "password"}
+    ],
+    "channels": {
+        "channel1": {
+            "channelName": "channel1",
+            "orderer": {
+                "orgName": "Company C",
+                "caAdmin": "ordererAdmin",
+                "caPassword": "ordererPassword",
+                "channelName": "channel1",
+                "caPort": 8054,
+                "caOperationPort": "18054",
+                "ordererAdmin": "admin",
+                "ordererPassword": "password",
+                "ordererPort": 8055,
+                "ordererOperationPort": "18055",
+                "ordererAdminPort": 8056,
+                "ordererMSPID": "orderer.company.c.msp"
+            },
+            "peers": [
+                {
+                    "orgName": "Company A",
+                    "caAdmin": "admin",
+                    "caPassword": "password",
+                    "channelName": "channel1",
+                    "caPort": 6054,
+                    "caOperationPort": "16054",
+                    "peerAdmin": "peerAdmin",
+                    "peerPassword": "peerPassword",
+                    "peerPort": 6055,
+                    "peerOperationPort": "16055",
+                    "chainCodePort": 6056,
+                    "couchdbPort": 6057,
+                    "peerMSPID": "company.a.msp"
+                },
+                {
+                    "orgName": "Company B",
+                    "caAdmin": "admin",
+                    "caPassword": "password",
+                    "channelName": "channel1",
+                    "caPort": 7054,
+                    "caOperationPort": "17054",
+                    "peerAdmin": "peerAdmin",
+                    "peerPassword": "peerPassword",
+                    "peerPort": 7055,
+                    "peerOperationPort": "17055",
+                    "chainCodePort": 7056,
+                    "couchdbPort": 7057,
+                    "peerMSPID": "company.b.msp"
+                }
+            ]
+        }
+    }
+}
