@@ -6,21 +6,21 @@ const { chdir, cwd } = require('process');
 var glob = require("glob")
 
 async function deployCC(channelName,ccpath){
-    shell.env["PATH"] =  __dirname + "/../bin/:" + shell.env["PATH"] // commennt this if alread set env
-    shell.env["FABRIC_CFG_PATH"] = __dirname+"/../config/"
+    shell.env["PATH"] =  __dirname + "/../../bin/:" + shell.env["PATH"] // commennt this if alread set env
+    shell.env["FABRIC_CFG_PATH"] = __dirname+"/../../config/"
     console.log("-------Package Chaincode----------")
-    shell.exec(`bash -c 'cd ../leopard-network/scripts; ./deployCC.sh packageChaincode ${channelName} ${ccpath} ; cd ../../application; pwd'`)
+    shell.exec(`bash -c 'cd ../../leopard-network/scripts; ./deployCC.sh packageChaincode ${channelName} ${ccpath} ; cd ../../admin_dashboard/application; pwd'`)
 
     shell.env["CORE_PEER_TLS_ENABLED"] = true
     
-    files = glob.sync("../leopard-network/docker/"+channelName+"/*.yaml")
+    files = glob.sync("../../leopard-network/docker/"+channelName+"/*.yaml")
     console.log(files)
 
     console.log("-------Install Chaincode----------")
     for(let i=0;i<files.length;i++){
         var value=await setEnv(channelName,files[i])
         if(value[1] === "peer"){
-            shell.exec(`bash -c 'cd ../leopard-network/scripts; ./deployCC.sh installChaincode ${value[0]} ${channelName} ; cd ../../application; pwd'`)
+            shell.exec(`bash -c 'cd ../../leopard-network/scripts; ./deployCC.sh installChaincode ${value[0]} ${channelName} ; cd ../../admin_dashboard/application; pwd'`)
         }
     }
     console.log("---------Approve a chaincode--------")
@@ -33,7 +33,7 @@ async function deployCC(channelName,ccpath){
             ordererName=value[0]
             ordererPort=value[2]
             orgName = String(value[0]).slice(8,String(value[0]).length)
-            pemFile = glob.sync(`../leopard-network/organizations/${channelName}/ordererOrganizations/${orgName}/orderers/orderer-${orgName}/tls/tlscacerts/*.pem`)
+            pemFile = glob.sync(`../../leopard-network/organizations/${channelName}/ordererOrganizations/${orgName}/orderers/orderer-${orgName}/tls/tlscacerts/*.pem`)
             ORDERER_CA=pemFile[0]
         }
     }
@@ -41,14 +41,14 @@ async function deployCC(channelName,ccpath){
         var value=await setEnv(channelName,files[i])
         if(value[1] === "peer"){
             ordererPort = await getPort(channelName)
-            shell.exec(`bash -c 'cd ../leopard-network/scripts; ./deployCC.sh approveForMyOrg  ${value[0]} ${channelName} ${ordererPort} ${ordererName} ${ORDERER_CA}; cd ../../application; pwd'`)
+            shell.exec(`bash -c 'cd ../../leopard-network/scripts; ./deployCC.sh approveForMyOrg  ${value[0]} ${channelName} ${ordererPort} ${ordererName} ${ORDERER_CA}; cd ../../admin_dashboard/application; pwd'`)
         }
     }
     console.log("---------Check commit readiness--------------")
     for(let i=0;i<files.length;i++){
         var value=await setEnv(channelName,files[i])
         if(value[1] === "peer"){
-            shell.exec(`bash -c 'cd ../leopard-network/scripts; ./deployCC.sh checkCommitReadiness  ${value[0]} ${channelName}; cd ../../application; pwd'`)
+            shell.exec(`bash -c 'cd ../../leopard-network/scripts; ./deployCC.sh checkCommitReadiness  ${value[0]} ${channelName}; cd ../../admin_dashboard/application; pwd'`)
         }
     }
 
@@ -68,39 +68,39 @@ async function deployCC(channelName,ccpath){
             if(count==1){
                 firstPeer=String(value[0])
             }
-            shell.exec(`bash -c 'docker cp ${__dirname}/../leopard-network/organizations/${channelName}/peerOrganizations/${namePeer}/peers/peer-${namePeer}/tls/ca.crt  ${firstPeer}:/etc/hyperledger/fabric/${value[0]}.crt'` )
+            shell.exec(`bash -c 'docker cp ${__dirname}/../../leopard-network/organizations/${channelName}/peerOrganizations/${namePeer}/peers/peer-${namePeer}/tls/ca.crt  ${firstPeer}:/etc/hyperledger/fabric/${value[0]}.crt'` )
             // shell.exec(`bash -c 'cd ../leopard-network/scripts; ./deployCC.sh checkCommitReadiness  ${value[0]} ${channelName}; cd ../../application; pwd'`)
         }
     }
     var fs = require('fs');
-    fs.writeFileSync(`${__dirname}/../leopard-network/tmp/info.txt`,info , function (err) {
+    fs.writeFileSync(`${__dirname}/../../leopard-network/tmp/info.txt`,info , function (err) {
     if (err) throw err;
     console.log('Saved!');
     });
-    shell.exec(`bash -c 'cd ../leopard-network/scripts; ./deployCC.sh commitChaincodeDefinition ${firstPeer} ${channelName} ${ordererPort} ${ordererName} ${info}; cd ../../application; pwd'`)
+    shell.exec(`bash -c 'cd ../../leopard-network/scripts; ./deployCC.sh commitChaincodeDefinition ${firstPeer} ${channelName} ${ordererPort} ${ordererName} ${info}; cd ../../admin_dashboard/application; pwd'`)
 
     console.log("--------------Query Committed ---------------")
     for(let i=0;i<files.length;i++){
         var value=await setEnv(channelName,files[i])
         if(value[1] === "peer"){
-            shell.exec(`bash -c 'cd ../leopard-network/scripts; ./deployCC.sh queryCommitted  ${value[0]} ${channelName}; cd ../../application; pwd'`)
+            shell.exec(`bash -c 'cd ../../leopard-network/scripts; ./deployCC.sh queryCommitted  ${value[0]} ${channelName}; cd ../../admin_dashboard/application; pwd'`)
         }
     }
     console.log("-----------Chain code init -----------------")
-    shell.exec(`bash -c 'cd ../leopard-network/scripts; ./deployCC.sh chaincodeInvokeInit ${firstPeer} ${channelName} ${ordererPort} ${ordererName} ${info}; cd ../../application; pwd'`)
+    shell.exec(`bash -c 'cd ../../leopard-network/scripts; ./deployCC.sh chaincodeInvokeInit ${firstPeer} ${channelName} ${ordererPort} ${ordererName} ${info}; cd ../../admin_dashboard/application; pwd'`)
 
 
 
 }
 async function getPort(channelName){
-    files = glob.sync("../leopard-network/docker/"+channelName+"/*.yaml")
+    files = glob.sync("../../leopard-network/docker/"+channelName+"/*.yaml")
     for(let i=0;i<files.length;i++){
         var value1=await setEnv(channelName,files[i])
         if(value1[1] ==="orderer"){
             ordererName=value1[0]
             ordererPort=value1[2]
             orgName = String(value1[0]).slice(8,String(value1[0]).length)
-            pemFile = glob.sync(`../leopard-network/organizations/${channelName}/ordererOrganizations/${orgName}/orderers/orderer-${orgName}/tls/tlscacerts/*.pem`)
+            pemFile = glob.sync(`../../leopard-network/organizations/${channelName}/ordererOrganizations/${orgName}/orderers/orderer-${orgName}/tls/tlscacerts/*.pem`)
             ORDERER_CA=pemFile[0]
         }
     }
@@ -146,7 +146,7 @@ async function setEnv(channelName, file){
 }
 
 async function main(){
-    await deployCC("channel1","../chaincode/admin-chaincode")
+    await deployCC("channel1","admin_dashboard/chaincode/admin-chaincode")
 
 }
 main()
