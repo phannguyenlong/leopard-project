@@ -154,7 +154,7 @@ approveForMyOrg() {
 
   echo $ORDERER_CA - $ORG - $ORDERER_PORT - $ORDERER_NAME
   set -x
-  docker cp $PWD/../../chaincode/admin-chaincode/$ORDERER_CA ${ORG}:/etc/hyperledger/fabric/orderer.crt
+  docker cp $PWD/../../admin_dashboard/chaincode/admin-chaincode/$ORDERER_CA ${ORG}:/etc/hyperledger/fabric/orderer.crt
   docker exec ${ORG} sh -c "peer lifecycle chaincode approveformyorg -o $ORDERER_NAME:$ORDERER_PORT --tls --cafile /etc/hyperledger/fabric/orderer.crt --channelID $CC_NAME --name ${CC_NAME} --version 1 --package-id $PACKAGE_ID --sequence 1"
   res=$?
   { set +x; } 2>/dev/null
