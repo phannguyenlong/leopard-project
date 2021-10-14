@@ -9,26 +9,48 @@
  const fs = require("fs")
  const {getChannelConfig, getLoginUser} = require("../util/WebUtil")
  const { spawn } = require('child_process');
+ 
 
  router.get('/getAllChannelName',async function(req,res){
-    console.log("Call ");
     var namesChannels = glob.sync("../../leopard-network/docker/*")
     var output=[]
     for(let i=0;i<namesChannels.length;i++){
         let channel_name = namesChannels[i].split("/")
         let channel = {}
         channel["index"]=i+1
-        channel["channel_name"] = channel_name[channel_name.length-1]
+        channel["channelName"] = channel_name[channel_name.length-1]
         output.push(channel)
     }
     console.log(output)
-    res.json(output);
+    res.json(output)
  })
 
  router.get('/showChannelDetail',async function(req,res){
     var requestChannel = req.query.channel_name
-    let file = require("../../server-config/server-config.json")
-    console.log(file["channels"][requestChannel])
+    var channelConfig = getChannelConfig()
+    var channel = channelConfig[requestChannel]
+    var orderer = channel["orderer"]
+    var peers = channel["peers"]
+
+    var outputOrderer = {}
+    outputOrderer["orgName"]=orderer["orgName"]
+    outputOrderer["port"]="localhost:"+orderer["ordererPort"]
+
+    var outputPeers = []
+    for(let i=0;i<peers.length;i++){
+        let outputPeer = {}
+        outputPeer["orgName"] = peers[i]["orgName"]
+        outputPeer["port"] = "localhost:"+peers[i]["peerPort"]
+        outputPeers.push(outputPeer)
+    }
+
+    output={}
+    output["channelName"] = channel["channelName"]
+    output["orderer"] = outputOrderer
+    output["peers"] = outputPeers
+
+    console.log(output)
+    res.json(output)
  })
  
  router.get('/getChannelStatus', async function (req, res) {
