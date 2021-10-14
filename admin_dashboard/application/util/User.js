@@ -64,7 +64,7 @@ class User {
         this.wallet.remove(session)
     }
 
-    async createContact(gateway, session) {
+    async createContract(gateway, session) {
         try {
             await gateway.connect(this.ccp, {
                 wallet: this.wallet,
