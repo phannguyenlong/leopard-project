@@ -9,7 +9,7 @@ const { Gateway } = require('fabric-network');
 const { validateSchema, generateFakeObject, getLoginUser } = require('../util/WebUtil.js');
 
 // GET /api/ledger/queryAll
-router.get('/:channelName/queryAll', async function (req, res) {
+router.get('/queryAll', async function (req, res) {
     let user = getLoginUser()[req.cookies.session]
     const gateway = new Gateway()
 
@@ -30,7 +30,7 @@ router.get('/:channelName/queryAll', async function (req, res) {
 })
 
 // GET /api/ledger/queryByKey
-router.get("/:channelName/queryByKey", async function (req, res) {
+router.get("/queryByKey", async function (req, res) {
     const gateway = new Gateway()
     let user = getLoginUser()[req.cookies.session]
     let queryString = {selector: {_id: { $regex: req.query.id}}}; // get key from params
@@ -51,7 +51,7 @@ router.get("/:channelName/queryByKey", async function (req, res) {
 })
 
 // GET /api/ledger/getData
-router.get("/:channelName/getData", async function (req, res) {
+router.get("/getData", async function (req, res) {
     const gateway = new Gateway()
     let user = getLoginUser()[req.cookies.session]
     let queryString = { selector: { _id: req.query.id}}; // get param from request
@@ -73,7 +73,7 @@ router.get("/:channelName/getData", async function (req, res) {
 
 
 // PUT /api/ledger/updateProduct
-router.put("/:channelName/updateProduct", async function (req, res) {
+router.put("/updateProduct", async function (req, res) {
     const gateway = new Gateway()
     let user = getLoginUser()[req.cookies.session]
     let data = req.body
@@ -94,7 +94,7 @@ router.put("/:channelName/updateProduct", async function (req, res) {
 })
 
 // DELETE /api/ledger/DeleteValueByKey
-router.delete("/:channelName/deleteValueByKey", async function (req, res) {
+router.delete("/deleteValueByKey", async function (req, res) {
     const gateway = new Gateway()
     let user = getLoginUser()[req.cookies.session]
     let key = req.query.id // get param from request
@@ -116,7 +116,7 @@ router.delete("/:channelName/deleteValueByKey", async function (req, res) {
 })
 
 // GET /api/ledger/GetProductHistory
-router.get("/:channelName/getProductHistory", async function (req, res) {
+router.get("/getProductHistory", async function (req, res) {
     const gateway = new Gateway()
     let user = getLoginUser()[req.cookies.session]
     let key = req.query.id // get param from request
@@ -138,7 +138,7 @@ router.get("/:channelName/getProductHistory", async function (req, res) {
 })
 
 // POST /api/ledger/addData
-router.post("/:channelName/addData", async function (req, res) {
+router.post("/addData", async function (req, res) {
     const gateway = new Gateway()
     let user = getLoginUser()[req.cookies.session]
     let data = req.body
