@@ -61,6 +61,9 @@ function generateOrdererMSP() {
 # lauch docker CA container
 docker-compose -f ../docker/$7/orderer-compose-$1.yaml up -d ca.orderer.$1
 
+# wait for key to generate
+sleep 5
+
 # check dir exsist or not
 if [ ! -d "../organizations/$7" ] 
 then 
