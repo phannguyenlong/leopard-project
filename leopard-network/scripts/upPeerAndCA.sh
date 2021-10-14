@@ -65,7 +65,8 @@ function generatePeerMSP() {
 
 # lauch docker CA container
 docker-compose -f ../docker/$7/ca_peer-compose-$1.yaml up -d ca.$1 couchdb.$1
-
+# wait for key to generate
+sleep 5
 # check dir exsist or not
 if [ ! -d "../organizations/$7" ] 
 then 
