@@ -8,9 +8,13 @@
  var glob = require("glob")
  const fs = require("fs")
  const { spawn } = require('child_process');
+ const {getChannelConfig, getLoginUser} = require("../util/WebUtil")
+ 
 
  router.get('/getAllChannelName',async function(req,res){
-    console.log("Call ");
+    console.log("Getchannel Config: ",getChannelConfig);
+    console.log("GetLogin users: ",getLoginUser);
+
     var namesChannels = glob.sync("../../leopard-network/docker/*")
     var output=[]
     for(let i=0;i<namesChannels.length;i++){
