@@ -1,3 +1,10 @@
 <h1>
     This is admin page
 </h1>
+<script>
+    fetch("http://localhost:8080/api/auth/adminAuth").then(res => {
+        if(res.status != 200) {
+        window.location.href = "http://localhost:8080/login.html?message=Root Admin only";
+        }
+    })
+</script>

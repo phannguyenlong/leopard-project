@@ -6,16 +6,9 @@ const express = require("express")
 const router = express.Router()
 const crypto = require('crypto');
 
-const { Wallets } = require('fabric-network');
-const FabricCAServices = require('fabric-ca-client');
-const path = require('path');
-const { buildCAClient, enrollAdmin, regsiterUser, enrollUser } = require('../../../test-application/javascript/CAUtil.js');
-const { buildCCPOrg1, buildWallet } = require('../../../test-application/javascript/AppUtil.js');
 const { getLoginUser } = require("../util/WebUtil");
 const {User} = require("../util/User")
 
-const mspOrg1 = 'Org1MSP';
-const walletPath = path.join(__dirname, '../wallet');
 const SECRET_KEY = 'mysupersecretkeyhahahahaha'
 
 
@@ -23,9 +16,23 @@ router.get("/", async function (req, res) {
     try {
         const user = getLoginUser()[req.cookies.session]
         if (!user) {
-            res.send(401)
+            res.sendStatus(401)
         } else {
-            res.send(200)
+            res.sendStatus(200)
+        }
+    } catch (err) {
+        res.status(500).send(err)
+    }
+})
+
+router.get("/adminAuth", async function (req, res) {
+    try {
+        const user = getLoginUser()[req.cookies.session]
+        if (!user) {
+            res.sendStatus(401)
+        } else {
+            if (!user.isRootAdmin) res.sendStatus(401)
+            else res.sendStatus(200)
         }
     } catch (err) {
         res.status(500).send(err)
