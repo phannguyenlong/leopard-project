@@ -26,9 +26,8 @@ class User {
         this.username = usernanme
 
         // check if admin or not
-        // this.isRootAdmin = serverConfig.rootAdmins.includes(this.username)
-        for (let i = 0; i < serverConfig.rootAdmins; i++) {
-            if (this.username === serverConfig.rootAdmins[i].username && password === serverConfig.rootAdmins[i].password ) {
+        for (let i = 0; i < serverConfig.rootAdmins.length; i++) {
+            if (this.username == serverConfig.rootAdmins[i].username && password == serverConfig.rootAdmins[i].password ) {
                 this.isRootAdmin = true;
                 return true; // if root admin dont do other thing
             }
