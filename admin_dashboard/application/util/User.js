@@ -40,6 +40,7 @@ class User {
             for (let i = 0; i < peers.length; i++) {
                 if (this.username === peers[i].caAdmin) {
                     this.channelName = channel
+                    this.chaincodeName = channel
                     this.wallet = await buildWallet(Wallets, WalletDir + channel)
                     this.organization = peers[i].orgName
                 }
@@ -63,7 +64,7 @@ class User {
         this.wallet.remove(session)
     }
 
-    async createContact(gateway, chaincodeName, session, channelName) {
+    async createContact(gateway, session) {
         try {
             await gateway.connect(this.ccp, {
                 wallet: this.wallet,
@@ -71,9 +72,9 @@ class User {
                 discovery: {enabled: true, asLocalhost: true}
             })
             // creat hyperfleger network instance
-            const network = await gateway.getNetwork(channelName)
+            const network = await gateway.getNetwork(this.channelName)
             // get contract from the network
-            return network.getContract(chaincodeName)
+            return network.getContract(this.chaincodeName)
         } catch (err) {
             console.error(err)
         }
