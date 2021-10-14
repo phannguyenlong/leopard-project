@@ -1,0 +1,75 @@
+<head>
+    <title>Admin Dashboard | Channels</title>
+    <link rel="stylesheet" href="../../../css/dashboard.css" />
+    <link rel="stylesheet" href="./index.css" />
+    <link rel="stylesheet" href="./style.css" />
+    <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+</head>
+
+<body>
+    <div id="header">
+        <img id="logo" src="../../../asset/images/grey_logo.svg" width="50px" />
+        <p id="headerText">Channel Creation</p>
+        <button class="btn logout">
+            <a style="text-decoration: none;color: inherit;" href="/api/auth/logout"
+            >Log out</a
+            >
+        </button>
+        </div>
+    
+        <!--Side bar button-->
+        <div id="midContainer">
+        <div id="sidebar">
+            <a style="text-decoration: none;color: inherit" href="/dashboard/network">
+            <div class="sidebarContent">
+                <img src="../../../asset/images/network.png" width="30px"/>
+                <p>Network</p>
+            </div>
+            </a>
+            <a style="text-decoration: none;color: inherit" href="/dashboard/database">
+            <div class="sidebarContent">
+                <img src="../../../asset/images/database.svg" width="30px"/>
+                <p>Database</p>
+            </div>
+            </a>
+            <a style="text-decoration: none;color: inherit" href="/dashboard/channel">
+            <div class="sidebarContent highlightSelected">
+                <img src="../../../asset/images/channel.png" width="30px"/>
+                <p>Channel</p>
+            </div>
+            </a>
+        </div class="sidebarContent">
+    
+    <!--Content-->
+    <div class="sectionContainer">
+        <div class="inputBoxHolder">
+            <strong>Channel name:</strong>
+            <input type="text" class="inputBox" placeholder="mychannel">
+        </div>
+
+        <div class="tableHolder">
+             <div class = "titleBtnHolder">
+                <span class="tableTitle">Peer Members</span>
+                <span class="titleBtn">
+                    <button type="button" class="button negativeButton">Remove all</button>
+                    <button id="addMemberBtn" type="button" class="button utilButton addButton">
+                        <img src="../../../asset/images/Vector.svg" width="15px" class="addBtnImage">
+                        <span class="addButtonTxt">Add</span>
+                    </button>
+                </span>
+             </div>
+
+            <div>
+                
+            <div id="channelTable"></div>
+            <script src="tabulator.js"></script>
+
+         <div class="bottomBtnHolder">
+             <a href="../index.html">
+                <button type="button" class="button positiveButton">Create</button>
+                <button type="button" class="button negativeButton">Cancel</button>
+             </a>
+         </div>
+    </div>
+</body>

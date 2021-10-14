@@ -1,0 +1,124 @@
+.highlightSelected {
+  background-color: #0074a2;
+  /* padding: 10px; */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: 100%;
+}
+
+#contentContainer {
+  padding: 30px;
+}
+
+a {
+    text-decoration: none;color: inherit
+}
+
+
+html {
+  background-color: rgb(235, 235, 235);
+}
+
+button {
+  transition-duration: 0.4s;
+  border-radius: 8px;
+  padding: 5px 10px 5px 10px;
+}
+
+button:hover {
+  background-color: #bdbdbd; /* Green */
+  color: white;
+  cursor: pointer;
+}
+
+.positiveButton {
+  background-color: #0074A2;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 120px;
+  font-weight: bold;
+}
+
+.negativeButton {
+  background-color: #ff4b46;
+  color: white;
+}
+
+.utilButton {
+  background-color: #FF4B46;
+  color: white;
+}
+
+.table {
+  border-collapse: collapse;
+  border-radius: 4px;
+  font-size: 1em;
+  height: 120px;
+  width: 100%;
+  padding: 20px;
+  background-color: white;
+}
+
+.table thead tr {
+  border-bottom: 1px solid black;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid black;
+}
+
+.table td {
+  padding: 14px;
+  word-spacing: normal;
+}
+
+.tableContent {
+  text-align: center;
+  font-size: 1.1em;
+  word-spacing: 60px;
+}
+
+.sectionHeader {
+  font-size: 30px;
+  padding: 0px 0px 10px 0px;
+}
+
+.activeStatus {
+  color: #4e8c67;
+}
+
+.inactiveStatus {
+  color: #ff4b46;
+}
+
+.headerButtContainer {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  flex-basis: 100%;
+  padding: 0px 10px 20px 10px;
+}
+.channelbtn {
+    display: flex;
+    /* align-items: center; */
+    justify-content: space-between;
+    width: 250px;
+}
+
+.sectionContainer {
+  display: flex;
+  flex-flow: row wrap;
+  /*border: 1px dashed black;*/
+  padding-bottom: 30px;
+  flex: 1 0 100%;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+}
+
+.contents {
+  text-align: center;
+  margin: auto;
+  width: 100%;
+}

@@ -1,0 +1,185 @@
+html
+{
+    background-color: rgb(235, 235, 235);
+}
+
+button
+{
+    transition-duration: 0.4s;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: bold;
+    margin: 5px;
+}
+
+button:hover
+{
+    background-color: #bdbdbd; /* Green */
+    color: white;
+}
+
+.positiveButton
+{
+    background-color: #4E8C67;
+    color:white;
+}
+
+.negativeButton
+{
+    background-color: #FF4B46;
+    color:white;
+}
+
+.utilButton
+{
+    background-color: #0074A2;
+    color:white;
+}
+
+.table
+{
+    border-collapse: collapse;
+    border-radius: 4px;
+    font-size: 1em;
+    height: 120px;
+    width: 100%;
+    background-color: white;
+}
+
+.table thead tr
+{
+    border-bottom: 1px solid black;
+}
+
+.table tbody tr
+{
+    border-bottom: 1px solid black;
+}
+
+.table td
+{
+    padding: 14px;
+    word-spacing: normal;
+    text-align: center;
+}
+
+.tableContent
+{
+    font-size: 1.1em;
+    word-spacing: 60px;
+}
+
+.table .tableBtns
+{
+    text-align: right;
+    word-spacing: 30px;
+}
+
+.sectionHeader
+{
+    font-size: 2em;
+    text-align: center;
+}
+
+.activeStatus
+{
+    color: #4E8C67;
+    
+}
+
+.inactiveStatus
+{
+    color:#FF4B46;
+}
+
+.sectionContainer
+{
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+    padding: 20px;
+    font-size: 1.2em;
+}
+
+.contents
+{
+    text-align: center;
+    margin: auto;
+    width: 100%;
+}
+
+.inputBoxHolder
+{
+    padding-bottom: 20px;
+}
+
+.inputBox
+{
+    padding: 10px 16px;
+    border-radius: 8px;
+    color: black;
+}
+
+.inputSection
+{
+    padding-bottom: 16px;
+}
+
+.addButton
+{
+    text-align: center;
+}
+
+.addButton .addButtonTxt
+{
+    vertical-align: middle;
+    font-size: 1.2em;
+}
+
+.addButton .addBtnImage
+{
+    display: block;
+    float: left;
+    margin-right: 12px;
+    height: 1.2em;
+    width: 1.2em;
+}
+
+.tableHolder
+{
+    padding-bottom: 20px;
+}
+
+.tableTitle
+{
+    font-size: 1.6em;
+    font-weight: normal;
+}
+
+.titleBtnHolder
+{
+    padding-bottom: 10px;
+    display: flex;
+}
+
+.titleBtn
+{
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.bottomBtnHolder
+{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 15px;
+}
+
+.nameHolder
+{
+    font-size: 1.6em;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
