@@ -14,7 +14,7 @@
 <body>
   <div id="header">
     <img id="logo" src="../../../asset/images/grey_logo.svg" width="50px" />
-    <p id="headerText">New Product</p>
+    <p id="headerText">New Organization</p>
     <button class="btn logout">
       <a style="text-decoration: none;color: inherit;" href="/api/auth/logout">Log out</a>
     </button>
@@ -36,30 +36,21 @@
     </div>
     <div id="contentContainer">
       <!--========================Product Info==========================-->
-      <h2>Product</h2>
+      <h2>Organization</h2>
       <div id="productInfo">
         <div class="infoEleContainer">
-            <p>ProductID: </p>
-            <input class="dataInput" id="productID" placeholder="Product ID" />
-        </div>
-        <div class="infoEleContainer">
-            <p>Product Description: </p>
-            <input class="dataInput" id="productDescription" placeholder="Product Description" />
-        </div>
-        <div class="infoEleContainer">
-            <p>Product Type: </p>
-            <input class="dataInput" id="productType" placeholder="Product type" />
+            <p>Comapny name: </p>
+            <input class="dataInput" id="orgName" placeholder="Organization name" />
         </div>
       </div>
       <div id="editContainer">
-        <button class="btn actionBtn" onclick="table.addRow({})">Add Row</button>
-        <button class="btn actionBtn" onclick="table.deleteRow(table.getSelectedRows())">Delete Row</button>
         <button class="btn actionBtn" onclick="table.undo();">Undo</button>
         <button class="btn actionBtn" onclick="table.redo();">Redo</button>
       </div>
       <div id="table"></div>
       <div id="submitContainer">
-        <button class="btn actionBtn" onclick="addData()" style="background-color: #4E8C67;">Add Product</button>
+        <button class="btn actionBtn" onclick="addData()" style="background-color: #4E8C67;">Submit Proposal</button>
+        <button class="btn actionBtn" style="background-color: #FF4B46;"><a href="./index.html">Cancel</a></button>
       </div>
     </div>
   </div>
@@ -71,23 +62,23 @@
         window.location.href = "http://localhost:8080/login.html";
       }
     })
-    let table, product
+    // Config column
+    let titles = ["Admin Username", "Admin Password", "Server username", "Server password", "Listen Port"]
+    let keys = [ "caAdmin", "caPassword", "peerAdmin", "peerPassword", "portNumber"]
+    let columns_config = []
+    for (let i = 0; i < keys.length; i++) {
+        columns_config[i] = { title: titles[i], field: keys[i], editor: "input", validator: "required" }
+    }
+    // placehodlder object
+    let foo = [{
+        caAdmin: "admin", caPassword: "password", 
+        peerAdmin: "serverAdmin", peerPassword: "serverPassword",
+        portNumber: 6054
+    }]
 
-    fetch("http://localhost:8080/api/ledger/fakeData"). then(res => res.json())
-    .then(data => {
-      product = data
-      var tabledata = data.procedures
-
-      // Config column
-      let keys = Object.keys(data.procedures[0])
-      let columns_config = []
-      for (let i = 0; i < keys.length; i++) {
-        columns_config[i] = { title: keys[i], field: keys[i], editor: "input", validator: "required" }
-      }
-
-      //initialize table
-      table = new Tabulator("#table", {
-        data: tabledata, //assign data to table
+    //initialize table
+    let table = new Tabulator("#table", {
+        data: foo, //assign data to table
         layout: "fitColumns",
         selectable:true, //make rows selectable
         addRowPos: "top",          //when adding a new row, add it to the top of the table
@@ -95,8 +86,7 @@
         movableColumns: true,      //allow column order to be changed
         columns: columns_config,
         validationMode: "highlight"
-      });
-    })
+    });
     //=========================Function part======================
     // for makeAlert
     function makeAlert(type, title) {
@@ -109,25 +99,24 @@
 
     // addData to ledger
     async function addData() {
-      product.productID = document.getElementById("productID").value
-      product.productType = document.getElementById("productType").value
-      product.productDescription = document.getElementById("productDescription").value
-      if (table.validate() == true && product.productID != null && product.productType != null) {
-        product.procedures = table.getData()
-        product.numberOfProcedure = product.procedures.length
+      let orgName = document.getElementById("orgName").value
+      console.log(orgName)
+      if (table.validate() == true && orgName !== "") {
+        let org = table.getData()[0]
+        org.orgName = orgName
         
-        const response = await fetch(`http://localhost:8080/api/ledger/addData`, {
+        const response = await fetch(`http://localhost:8080/api/channel/submitProposal`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(product)
+          body: JSON.stringify(org)
         })
         if (response.status == 200) {
-          // redirect
-          window.location.href = `/dashboard/database/detail.html?id=${product.productID}`;
-        }
-        else makeAlert("error", "Update error: " + response.statusText)
+            makeAlert("success", "Submit proposal success")
+        } else if (response.status == 403) {
+            makeAlert("error", "Unauthorized")
+        } else makeAlert("error", "Update error: " + response.statusText)
         console.log(response)
       } else {
         makeAlert("error", "Wrong data type")

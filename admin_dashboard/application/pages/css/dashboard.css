@@ -19,6 +19,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 10px;
+    position: fixed;
 }
 
 #headerText {
@@ -54,6 +55,8 @@ body {
     color: #888888;
     font-weight: bolder;
     text-align: center;
+    position: fixed;
+    margin-top: 60px;
 }
 
 .sidebarContent {
@@ -67,6 +70,6 @@ body {
 }
 
 #contentContainer {
-    margin: 10px;
+    margin: 80px 10px 10px 110px;
     padding: 10px;
 }

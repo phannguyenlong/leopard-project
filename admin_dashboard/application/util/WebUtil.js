@@ -7,6 +7,7 @@
 const Ajv = require("ajv");
 const fs = require('fs');
 const jsf = require('json-schema-faker');
+const {Channel, OrdererOrganization, PeerOrganization} = require("../channel-utils/Organizations")
 
 let loginUser = {} // object for holding all logged in user to channel
 let channelList = {} // object for holding all the existing channel on the network
@@ -29,6 +30,21 @@ exports.generateFakeObject = function () {
 exports.loadChannelConfig = async function () {
     let file = fs.readFileSync("../server-config/server-config.json")
     channelList = JSON.parse(file).channels
+}
+
+exports.buildChannelObject = function (jsonObj) {
+    let channelName = jsonObj.channelName
+
+    let orderer = jsonObj.orderer
+    let ordererObj = new OrdererOrganization(orderer.orgName, orderer.caAdmin, orderer.caPassword, orderer.ordererAdmin, orderer.ordererPassword, orderer.channelName, orderer.caPort)
+
+    let peersObjc = [] // it is a array
+    let peers = jsonObj.peers
+    for (let i = 0; i < peers.length; i++) {
+        peersObjc.push(new PeerOrganization(peers[i].orgName, peers[i].caAdmin, peers[i].caPassword, peers[i].peerAdmin, peers[i].peerPassword, peers[i].channelName, peers[i].caPort))
+    }
+
+    return new Channel(channelName, ordererObj, peersObjc)
 }
 /**
  * This function is use for shareing loginUser array between routes

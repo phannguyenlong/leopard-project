@@ -10,12 +10,16 @@ const router = express.Router()
 const authRoute = require("./authRoutes")
 const ledgerRoute = require("./ledgerRoutes")
 const netwrokRoute = require("./networkRoutes")
+const channelRoute = require("./channelRoutes")
 
 // api/auth
 router.use('/auth', authRoute)
 
 // api/auth
 router.use('/ledger', ledgerRoute)
+
+// this route is use for org admin
+router.use("/channel", channelRoute)
 
 // api/network
 // this route is for root admin only
@@ -24,9 +28,5 @@ router.use('/network', function (req, res, next) {
     if (user && user.isRootAdmin) next() // allow RootAdmin
     else res.redirect('/login.html?message=Root admin only')
 }, netwrokRoute)
-
-router.use("/channel", function (req, res, next) {
-    
-})
 
 module.exports = router
