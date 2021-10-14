@@ -9,7 +9,7 @@ const { Channel } = require('Organizations');
 const { create } = require("domain");
 const { decode } = require("punycode");*/
 // config path
-let NETWORK_PATH = __dirname + "/../../leopard-network/" // path to network
+let NETWORK_PATH = __dirname + "/../../../leopard-network/" // path to network
 let UTIL_PATH = __dirname // for comback to this file
 
 // Some comments on naming convention of the fetch/encode/decode file
@@ -64,11 +64,10 @@ async function createConfigtx(peer) {
     fs.writeFileSync(filePath + `/configtx.yaml`, yaml.dump(jsonConfig, { lineWidth: -1 }))
     console.log('yaml creation sucess');
 
-    shell.env["PATH"] = __dirname + "/../bin/:" + shell.env["PATH"]
+    shell.env["PATH"] = NETWORK_PATH + "../bin/:" + shell.env["PATH"]
     shell.env["FABRIC_CFG_PATH"] = NETWORK_PATH + `/channel-artifacts/${peer.getNormalizeChannel}/`
     console.log('export ok');
-    console.log(__dirname);
-
+ 
     shell.exec(`configtxgen -printOrg ${companyname}.msp > ${NETWORK_PATH}/channel-artifacts/${peer.getNormalizeChannel}/${companyname}.json`)
     console.log('JSONified success');
     chdir(filePath) // then set it again to prevent error
@@ -80,7 +79,7 @@ async function fetchConfig(PeerOrganization, OrdererOrganization) {
     // PeerOrganization = peer object that is a member of the channel
     // OdererOrganization = orderer of the channel
     // Impersonating a member of the channel
-    shell.env["PATH"] = __dirname + "/../../bin/:" + shell.env["PATH"] // set path to bin
+    shell.env["PATH"] = NETWORK_PATH + "../bin/:" + shell.env["PATH"] // set path to bin
     shell.env["FABRIC_CFG_PATH"] = NETWORK_PATH + `/channel-config/${PeerOrganization.getNormalizeChannel}` // path to configtx of the channel
     shell.env["CORE_PEER_TLS_ENABLED"] = true // enable TLS
     shell.env["CORE_PEER_LOCALMSPID"] = `${PeerOrganization.peerMSPID}`
@@ -97,19 +96,19 @@ async function fetchConfig(PeerOrganization, OrdererOrganization) {
 async function decodePBtoJSON(blockName, channelName) {
     // blockName = name of the block to be encode
 
-    shell.env["PATH"] = __dirname + `/../../bin/:` + shell.env["PATH"] // set path to bin
+    shell.env["PATH"] = NETWORK_PATH + `../bin/:` + shell.env["PATH"] // set path to bin
     // Convert config block to json
-    shell.exec(`configtxlator proto_decode --input ${NETWORK_PATH}/channel-artifacts/${channelName}/${blockName}.pb --type common.Block --output ../leopard-network/channel-artifacts/${channelName}/${blockName}.json`)
-    console.log('decode ${blockName}.pb to ${blockName}.json done');
+    shell.exec(`configtxlator proto_decode --input ${NETWORK_PATH}/channel-artifacts/${channelName}/${blockName}.pb --type common.Block --output ${NETWORK_PATH}/channel-artifacts/${channelName}/${blockName}.json`)
+    console.log(`decode ${blockName}.pb to ${blockName}.json done`);
 }
 
 async function encodeJSONtoPB(blockName, channelName) {
     // blockName = name of the block to be decode
 
-    shell.env["PATH"] = __dirname + `/../../bin/:` + shell.env["PATH"] // set path to bin
+    shell.env["PATH"] = NETWORK_PATH + `../bin/:` + shell.env["PATH"] // set path to bin
     console.log('sth1');
     // Convert config json back to pb
-    shell.exec(`configtxlator proto_encode --input ${NETWORK_PATH}/channel-artifacts/${channelName}/${blockName}.json --type common.Config --output ../leopard-network/channel-artifacts/${channelName}/${blockName}.pb`)
+    shell.exec(`configtxlator proto_encode --input ${NETWORK_PATH}/channel-artifacts/${channelName}/${blockName}.json --type common.Config --output ${NETWORK_PATH}/channel-artifacts/${channelName}/${blockName}.pb`)
     console.log(`encode ${blockName}.pb to ${blockName}.json done`);
 }
 
@@ -137,7 +136,7 @@ async function PeerJoinChannel(PeerOrganization, OrdererOrganization) {
     // 2 organization objects 
     // PeerOrganization = peer object that is the newly joined member of the channel
     // OdererOrganization = orderer of the channel
-    shell.env["PATH"] = NETWORK_PATH + `../../bin/:` + shell.env["PATH"] // set path to bin
+    shell.env["PATH"] = NETWORK_PATH + `../bin/:` + shell.env["PATH"] // set path to bin
 
     shell.env["FABRIC_CFG_PATH"] = NETWORK_PATH + `/channel-config/${PeerOrganization.getNormalizeChannel}` // path to configtx of the channel
     shell.env["CORE_PEER_TLS_ENABLED"] = true // enable TLS
@@ -173,7 +172,7 @@ async function submitConfigDemo(originalBlock, modifiedBlock, Channel) {
     // this function is for demo only
     // logic: all peer member of the channel will sign (approve) the change
     // Channel = channel object. Channel we want to approve the modified block
-    shell.env["PATH"] = NETWORK_PATH + `../../bin:` + shell.env["PATH"] // set path to bin
+    shell.env["PATH"] = NETWORK_PATH + `../bin:` + shell.env["PATH"] // set path to bin
     // calculate the delta between these two config protobufs
     // config_update.pb is now ready to submit and sign (update the channel config)
     shell.exec(`configtxlator compute_update --channel_id ${Channel.getNormalizeChannel} --original ${NETWORK_PATH}/channel-artifacts/${Channel.getNormalizeChannel}/${originalBlock}.pb --updated ${NETWORK_PATH}/channel-artifacts/${Channel.channelName}/${modifiedBlock}.pb --output ${NETWORK_PATH}/channel-artifacts/${Channel.getNormalizeChannel}/config_update.pb`)
@@ -221,21 +220,21 @@ async function submitConfigDemo(originalBlock, modifiedBlock, Channel) {
 // write main here to demo
 async function addOrg(PeerOrganization, Channel) {
     // Prerequisite: need core.yaml in channel-config/${channelName}
-    shell.cp('-f', `${UTIL_PATH}/../../config/core.yaml`, `${NETWORK_PATH}/channel-config/${Channel.getNormalizeChannel}`)
+    shell.cp('-f', `${UTIL_PATH}/../../../config/core.yaml`, `${NETWORK_PATH}/channel-config/${Channel.getNormalizeChannel}`)
     // first create config of the org that want to join channel
     await createConfigtx(PeerOrganization)
-    // // second, use a member of the channel to fetch the config block
+    // // // second, use a member of the channel to fetch the config block
     await fetchConfig(Channel.peers[0], Channel.orderer)
-    // third, decode the config block
+    // // third, decode the config block
     await decodePBtoJSON("config_block", `${Channel.getNormalizeChannel}`)
-    // // fourth, update the config block by appending the json file in step 1
+    // // // fourth, update the config block by appending the json file in step 1
     await updateConfig("config_block", `${PeerOrganization.getNormalizeOrg}`, `${Channel.getNormalizeChannel}`)
-    // // fifth, encode the 2 blocks back to pb
+    // // // // fifth, encode the 2 blocks back to pb
     await encodeJSONtoPB("config_block", `${Channel.getNormalizeChannel}`)
     await encodeJSONtoPB("modified_config", `${Channel.getNormalizeChannel}`)
-    // // sixth, run the demo submit&sign
-    await submitConfigDemo("config_block", "modified_config", channel1)
-    // join the peer into the channel
+    // // // // sixth, run the demo submit&sign
+    await submitConfigDemo("config_block", "modified_config", Channel)
+    // // // join the peer into the channel
     await PeerJoinChannel(PeerOrganization, Channel.orderer)
 }
 
