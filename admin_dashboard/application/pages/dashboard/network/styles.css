@@ -1,0 +1,113 @@
+html
+{
+    background-color: rgb(235, 235, 235);
+}
+
+button
+{
+    transition-duration: 0.4s;
+    border-radius: 8px;
+    padding: 12px 14px;
+}
+
+button:hover
+{
+    background-color: #bdbdbd; /* Green */
+    color: white;
+}
+
+.positiveButton
+{
+    background-color: #4E8C67;
+    color:white;
+}
+
+.negativeButton
+{
+    background-color: #FF4B46;
+    color:white;
+}
+
+.utilButton
+{
+    background-color: #0074A2;
+    color:white;
+}
+
+.table
+{
+    border-collapse: collapse;
+    border-radius: 4px;
+    font-size: 1em;
+    height: 120px;
+    width: 100%;
+    padding: 20px;
+    background-color: white;
+}
+
+.table thead tr
+{
+    border-bottom: 1px solid black;
+}
+
+.table tbody tr
+{
+    border-bottom: 1px solid black;
+}
+
+.table td
+{
+    padding: 14px;
+    word-spacing: normal;
+}
+
+
+.tableContent
+{
+    text-align: center;
+    font-size: 1.1em;
+    word-spacing: 60px;
+}
+
+.sectionHeader
+{
+    font-size: 30px;
+}
+
+.activeStatus
+{
+    color: #4E8C67;
+    
+}
+
+.inactiveStatus
+{
+    color:#FF4B46;
+}
+
+.headerButtContainer
+{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    flex-basis: 100%;
+}
+
+.sectionContainer
+{
+    display: flex;
+    flex-flow: row wrap;
+    /*border: 1px dashed black;*/
+    padding-bottom: 30px;
+    flex: 1 0 100%;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+}
+
+.contents
+{
+    text-align: center;
+    margin: auto;
+    width: 100%;
+}

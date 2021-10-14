@@ -10,6 +10,7 @@ module.exports.deployCC = async function deployCC(channelName,ccpath){
     shell.env["PATH"] =  __dirname + "/../../../bin/:" + shell.env["PATH"] // commennt this if alread set env
     shell.env["FABRIC_CFG_PATH"] = __dirname+"/../../../config/"
     console.log("-------Package Chaincode----------")
+    console.log(__dirname)
     shell.exec(`bash -c 'cd ../../../leopard-network/scripts; ./deployCC.sh packageChaincode ${channelName} ${ccpath} ; cd ../../admin_dashboard/application/channel-utils; pwd'`)
 
     shell.env["CORE_PEER_TLS_ENABLED"] = true
@@ -146,7 +147,6 @@ async function setEnv(channelName, file){
     return [volumeName,nodeName[0],ordererPort,port]
 }
 
-async function main(){
-    await deployCC("channel1","admin_dashboard/chaincode/admin-chaincode")
-}
-// main()
+// async function main(){
+//     await deployCC("channel1","admin_dashboard/chaincode/admin-chaincode")
+// }

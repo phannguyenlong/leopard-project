@@ -1,0 +1,71 @@
+
+<head>
+    <title>Admin Dashboard | Network Status</title>
+    <link rel="stylesheet" href="../../css/dashboard.css" />
+    <link rel="stylesheet" href="./index.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <!--script src="networkStats.js" async></script-->
+    <script src="channelDetail.js" async></script>
+    <style>
+        
+
+        
+        #channelName{
+            text-align: left;
+            margin-bottom:2%
+        }
+        #back_bnt{
+            margin-left:90%
+        }
+      </style>
+  </head>
+  <body>
+    <div id="header">
+        <img id="logo" src="../../asset/images/grey_logo.svg" width="50px" />
+        <p id="headerText">Network</p>
+        <button class="btn logout">
+          <a style="text-decoration: none;color: inherit;" href="/api/auth/logout"
+            >Log out</a
+          >
+        </button>
+      </div>
+      <div id="midContainer">
+        <div id="sidebar">
+          <a style="text-decoration: none;color: inherit" href="/dashboard/network">
+            <div class="sidebarContent highlightSelected">
+              <img src="../../asset/images/network.png" width="30px"/>
+              <p>Network</p>
+            </div>
+          </a>
+          <a style="text-decoration: none;color: inherit" href="/dashboard/database">
+            <div class="sidebarContent">
+              <img src="../../asset/images/database.svg" width="30px"/>
+              <p>Database</p>
+            </div>
+          </a>   
+        </div>
+        <div id="contentContainer" class="contents">
+            <div id="channelName"></div>
+            <section class="sectionContainer">
+                <div class="headerButtContainer">
+
+                </div>
+                <table id="tablePeer" class="table">
+
+                </table>
+            </section>
+            <section class="sectionContainer">
+                <div class="headerButtContainer">
+
+                </div>
+                <table id="tableOrderer" class="table">
+
+                </table>
+            </section>
+            <button id="back_bnt" onclick="back()">Back</button>
+        </div>        
+
+        </table>
+    </div>
+  </body>
+  
