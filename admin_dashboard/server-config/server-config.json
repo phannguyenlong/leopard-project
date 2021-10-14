@@ -54,6 +54,55 @@
                     "peerMSPID": "company.b.msp"
                 }
             ]
+        },
+        "channel2": {
+            "channelName": "channel2",
+            "orderer": {
+                "orgName": "Company D",
+                "caAdmin": "ordererAdmin",
+                "caPassword": "ordererPassword",
+                "channelName": "channel2",
+                "caPort": 8064,
+                "caOperationPort": "18064",
+                "ordererAdmin": "admin",
+                "ordererPassword": "password",
+                "ordererPort": 8065,
+                "ordererOperationPort": "18065",
+                "ordererAdminPort": 8066,
+                "ordererMSPID": "orderer.company.d.msp"
+            },
+            "peers": [
+                {
+                    "orgName": "Company E",
+                    "caAdmin": "adminA",
+                    "caPassword": "passwordA",
+                    "channelName": "channel2",
+                    "caPort": 6064,
+                    "caOperationPort": "16064",
+                    "peerAdmin": "peerAdminA",
+                    "peerPassword": "peerPasswordA",
+                    "peerPort": 6065,
+                    "peerOperationPort": "16065",
+                    "chainCodePort": 6066,
+                    "couchdbPort": 6067,
+                    "peerMSPID": "company.e.msp"
+                },
+                {
+                    "orgName": "Company F",
+                    "caAdmin": "adminB",
+                    "caPassword": "passwordB",
+                    "channelName": "channel2",
+                    "caPort": 7064,
+                    "caOperationPort": "17064",
+                    "peerAdmin": "peerAdminB",
+                    "peerPassword": "peerPasswordB",
+                    "peerPort": 7065,
+                    "peerOperationPort": "17065",
+                    "chainCodePort": 7066,
+                    "couchdbPort": 7067,
+                    "peerMSPID": "company.f.msp"
+                }
+            ]
         }
     }
 }
