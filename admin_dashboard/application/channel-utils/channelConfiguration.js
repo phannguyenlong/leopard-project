@@ -132,6 +132,23 @@ async function updateConfig(configName, companyName, channelName) {
     console.log('sth sth');
 }
 
+//delete the org*.json to config.json
+async function removeConfig(configName, companyName, channelName) {
+
+    //shell.env["PATH"] = NETWORK_PATH + `channel-artifacts/${channelName}` + shell.env["PATH"]
+    let path = NETWORK_PATH + `/channel-artifacts/${channelName}/`
+
+    var data1 = fs.readFileSync(path + `${configName}.json`);
+    var myObject1 = JSON.parse(data1);
+    myObject1 = { ...myObject1.data.data[0].payload.data.config }
+
+    fs.writeFileSync(path + `${configName}.json`, JSON.stringify(myObject1, null, 4))
+
+    delete myObject1.channel_group.groups.Application.groups[`${companyName}.msp`]
+    
+    fs.writeFileSync(path + "modified_config.json", JSON.stringify(myObject1, null, 4)) //
+}
+
 async function PeerJoinChannel(PeerOrganization, OrdererOrganization) {
     // 2 organization objects 
     // PeerOrganization = peer object that is the newly joined member of the channel
@@ -238,11 +255,30 @@ async function addOrg(PeerOrganization, Channel) {
     await PeerJoinChannel(PeerOrganization, Channel.orderer)
 }
 
+async function removeOrg(PeerOrganization, Channel) {
+    // Prerequisite: need core.yaml in channel-config/${channelName}
+    shell.cp('-f', `${UTIL_PATH}/../../../config/core.yaml`, `${NETWORK_PATH}/channel-config/${Channel.getNormalizeChannel}`)
+    // // First, use a member of the channel to fetch the config block
+    await fetchConfig(Channel.peers[0], Channel.orderer)
+    // // second, decode the config block
+    await decodePBtoJSON("config_block", `${Channel.getNormalizeChannel}`)
+    // // third, remove the peer.msp in the config block
+    await removeConfig("config_block", `${PeerOrganization.getNormalizeOrg}`, `${Channel.getNormalizeChannel}`)
+    // // fourth, encode the 2 blocks back to pb
+    await encodeJSONtoPB("config_block", `${Channel.getNormalizeChannel}`)
+    await encodeJSONtoPB("modified_config", `${Channel.getNormalizeChannel}`)
+    // // fifth, run the demo submit&sign
+    await submitConfigDemo("config_block", "modified_config", Channel)
+    
+}
+
 exports.createConfigtx = createConfigtx
 exports.addOrg = addOrg
+exports.removeOrg = removeOrg
 exports.fetchConfig = fetchConfig
 exports.decodePBtoJSON = decodePBtoJSON
 exports.updateConfig = updateConfig
+exports.removeConfig = removeConfig
 exports.encodeJSONtoPB = encodeJSONtoPB
 exports.submitConfigDemo = submitConfigDemo
 exports.PeerJoinChannel = PeerJoinChannel
