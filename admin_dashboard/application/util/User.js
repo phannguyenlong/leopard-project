@@ -43,7 +43,6 @@ class User {
                     this.wallet = await buildWallet(Wallets, WalletDir + channel)
                     this.organization = peers[i].orgName
                 }
-                break;
             }
         }
 
