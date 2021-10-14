@@ -1,0 +1,52 @@
+body {
+    background-color: #E9E9EA;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.log-form {
+    text-align: center;
+    width: 450px;
+    margin: 2% auto 10px auto;
+}
+
+#logoContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#inputContainer {
+    background-color: white;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 20px;
+    height: 410px;
+    padding: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#submitForm {
+    width: 300px;
+    text-align: left;
+    margin: 10px auto 0px auto;
+}
+
+.dataInput {
+    width: 300px;
+    height: 40px;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0px 10px 0px;
+}
+
+.btn {
+    background-color: #007CBA;
+    border-radius: 10px;
+    color: white;
+    padding: 10px 20px 10px 20px;
+    text-align: center;
+    font-weight: bolder;
+    margin-top: 5px;
+}

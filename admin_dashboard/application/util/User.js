@@ -78,6 +78,25 @@ class User {
         }
     }
 
+    async regsiterClient(username, password, session) {
+        let adminIdentity = await this.wallet.get(session)
+        const provider = this.wallet.getProviderRegistry().getProvider(adminIdentity.type);
+        const adminUser = await provider.getUserContext(adminIdentity, this.username);
+        let secret
+        try {
+            secret = await this.getCAClient.register({
+                // affiliation: affiliation,
+                enrollmentID: username,
+                enrollmentSecret: password,
+                maxEnrollments: 1, // 1 enrollment only
+                role: 'client'
+            }, adminUser);
+        } catch (err) {
+            throw err
+        } 
+        return secret
+   }
+
     get getChannelName() {
         return this.channelName
     }
@@ -87,7 +106,6 @@ class User {
     }
 
     get getCAClient() {
-        console.log(this.orgConfig)
         let ca = this.orgConfig.certificateAuthorities[0]
     	const caInfo = this.ccp.certificateAuthorities[ca]; //lookup CA details from config
         const caTLSCACerts = caInfo.tlsCACerts.pem;

@@ -1,0 +1,25 @@
+ <head>
+  <title>Admin Dashboard Login</title>
+  <link rel="stylesheet" href="./download.css">
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head> 
+
+<div class="log-form">
+  <div id="logoContainer">
+    <img src="../asset/images/black_logo.png" width="100px" />
+    <h2>The Leopard Project</h2>
+  </div>
+  <div id="inputContainer">
+    <p>Download Your Certificate</p>
+    <div id="downloadContainer" >
+        <button class="btn" id="certDownload"></button>
+        <button class="btn" id="keyDownload"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+    let token = (new URL(window.location.href)).searchParams.get("token");
+    document.getElementById("certDownload").innerHTML= `<a href="http://localhost:8080/api/auth/getCert/${token}/client.crt">Download Certificate</a>`
+    document.getElementById("keyDownload").innerHTML= `<a href="http://localhost:8080/api/auth/getCert/${token}/client.key">Download Private key</a>`
+</script>
