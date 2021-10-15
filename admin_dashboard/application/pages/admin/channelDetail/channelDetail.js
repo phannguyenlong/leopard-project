@@ -66,6 +66,6 @@ async function loadData(){
 
 }
 function back(){
-    window.location.href = "http://localhost:8080/dashboard/network/";
+    window.location.href = "http://localhost:8080/admin/channelList/";
 
 }
