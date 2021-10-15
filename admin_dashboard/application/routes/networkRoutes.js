@@ -7,11 +7,14 @@
  const router = express.Router();
  var glob = require("glob")
  const fs = require("fs")
- const {getChannelConfig, getLoginUser} = require("../util/WebUtil")
- const {OrdererOrganization, PeerOrganization, Channel} = require("../../application/channel-utils/Organizations")
+const { getChannelConfig, getLoginUser } = require("../util/WebUtil")
+const { createChannel } = require("../channel-utils/channelInteract")
+const { deployCC } = require("../channel-utils/deployChaincode")
+const { OrdererOrganization, PeerOrganization, Channel } = require("../../application/channel-utils/Organizations")
+const { creatPeerAndCA, createOrdererAndCA } = require("../channel-utils/channelComponent")
 
  const { spawn } = require('child_process');
-const { main } = require("../main");
+// const { main } = require("../main");
  
 
  router.get('/getAllChannelName',async function(req,res){
@@ -80,7 +83,7 @@ const { main } = require("../main");
          
      
  })
-router.post("/createChannel", function (req, res) {
+router.post("/createChannel", async function (req, res) {
     let dataInput = req.body
     console.log("Body: ",dataInput)
 
@@ -91,17 +94,29 @@ router.post("/createChannel", function (req, res) {
     for(let i=0;i<dataInput.length;i++){
         if(dataInput[i]["isOrderer"]==true){
             countOrderer+=1
-            orderer=new OrdererOrganization("Company "+dataInput[i]["Org_name"],dataInput[i]["CA_username"],dataInput[i]["CA_password"],
+            orderer=new OrdererOrganization(dataInput[i]["Org_name"],dataInput[i]["CA_username"],dataInput[i]["CA_password"],
                                             dataInput[i]["peer_username"],dataInput[i]["peer_password"],dataInput[i]["channel_name"],parseInt(dataInput[i]["port_number"]))
         }
         else{
-            peers.push(new PeerOrganization("Company "+dataInput[i]["Org_name"],dataInput[i]["CA_username"],dataInput[i]["CA_password"],
+            peers.push(new PeerOrganization(dataInput[i]["Org_name"],dataInput[i]["CA_username"],dataInput[i]["CA_password"],
             dataInput[i]["peer_username"],dataInput[i]["peer_password"],dataInput[i]["channel_name"],parseInt(dataInput[i]["port_number"])))
         }
     }
     let channel = new Channel(dataInput[0]["channel_name"],orderer,peers)
-    main(orderer,peers,channel)
-    console.log(peers,orderer,channel)
+    // await main(orderer,peers,channel)
+    await createOrdererAndCA(orderer)
+
+    // create peer
+    for (let i = 0; i < peers.length; i++) {
+        await creatPeerAndCA(peers[i])
+    }
+
+    // join channel
+    await createChannel(channel)
+    await deployCC(channel.channelName,"admin_dashboard/chaincode/admin-chaincode")
+    console.log(peers, orderer, channel)
+    
+    res.sendStatus(200)
 })
 
 

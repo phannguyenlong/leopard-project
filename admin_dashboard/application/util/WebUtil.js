@@ -21,7 +21,7 @@ exports.validateSchema = async function (object) {
 }
 
 exports.generateFakeObject = function () {
-    let file = fs.readFileSync("../server-config/mychannel_schema.json")
+    let file = fs.readFileSync( __dirname + "/../../server-config/mychannel_schema.json")
     jsf.option({ alwaysFakeOptionals: true, maxItems: 1 }) // fill up all field
     let object = jsf.generate(JSON.parse(file.toString()))
     return object
