@@ -91,5 +91,15 @@ module.exports.createChannel = async function createChannel(channel) {
     chdir(UTIL_PATH) // then set it again to prevent error
 
     // export config file
-await channel.exportConfig()
+    await channel.exportConfig()
+}
+
+module.exports.downChannel = async function downChannel(channel) {
+    shell.exec(`bash -c 'cd ${NETWORK_PATH}/scripts; ./downComponent.sh peer ${channel.getNormalizeChannel}; cd ${UTIL_PATH}; pwd'`)
+    chdir(UTIL_PATH) // then set it again to prevent error
+}
+
+module.exports.downPeer = async function downPeer(peer) {
+    shell.exec(`bash -c 'cd ${NETWORK_PATH}/scripts; ./downComponent.sh peer ${peer.getNormalizeChannel} ${peer.getNormalizeOrg}; cd ${UTIL_PATH}; pwd'`)
+    chdir(UTIL_PATH) // then set it again to prevent error
 }
