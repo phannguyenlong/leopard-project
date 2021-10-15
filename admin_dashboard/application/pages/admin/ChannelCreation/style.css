@@ -95,10 +95,11 @@ button:hover
 .sectionContainer
 {
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: row wrap;
     width: 100%;
-    padding: 20px;
     font-size: 1.2em;
+    margin: 80px 10px 10px 110px;
+    padding: 10px;
 }
 
 .contents
@@ -147,13 +148,13 @@ button:hover
 
 .tableHolder
 {
-    padding-bottom: 20px;
+    width: 100%;
 }
 
 .tableTitle
 {
     font-size: 1.6em;
-    font-weight: normal;
+    font-weight: bold;
 }
 
 .titleBtnHolder
@@ -171,10 +172,11 @@ button:hover
 
 .bottomBtnHolder
 {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
     margin: 15px;
+    width: 100%;
 }
 
 .nameHolder

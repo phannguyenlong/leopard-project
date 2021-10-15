@@ -97,8 +97,9 @@ button:hover
     display: flex;
     flex-flow: column wrap;
     width: 100%;
-    padding: 20px;
     font-size: 1.2em;
+    margin: 80px 10px 10px 110px;
+    padding: 10px;
 }
 
 .contents
@@ -168,10 +169,18 @@ button:hover
     display: flex;
     justify-content: flex-end;
 }
+.infoContainer {
+    margin: 10px 0px 0px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 500px;
+    font-weight: bold;
+}
 
 .bottomBtnHolder
 {
-    position: absolute;
+    /* position: absolute; */
     bottom: 0;
     right: 0;
     margin: 15px;
