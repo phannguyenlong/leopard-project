@@ -24,10 +24,26 @@
             },
             "peers": [
                 {
+                    "orgName": "Company B",
+                    "caAdmin": "user2",
+                    "caPassword": "123",
+                    "channelName": "channel1",
+                    "caPort": 7055,
+                    "caOperationPort": "17055",
+                    "peerAdmin": "peer2",
+                    "peerPassword": "123",
+                    "peerPort": 7056,
+                    "peerOperationPort": "17056",
+                    "chainCodePort": 7057,
+                    "couchdbPort": 7058,
+                    "peerMSPID": "company.b.msp"
+                },
+                {
                     "orgName": "Company A",
                     "caAdmin": "adminA",
                     "caPassword": "pass",
                     "channelName": "channel1",
+<<<<<<< HEAD
                     "caPort": 6054,
                     "caOperationPort": "16054",
                     "peerAdmin": "peerA",
@@ -36,6 +52,16 @@
                     "peerOperationPort": "16055",
                     "chainCodePort": 6056,
                     "couchdbPort": 6057,
+=======
+                    "caPort": 6055,
+                    "caOperationPort": "16055",
+                    "peerAdmin": "peer1",
+                    "peerPassword": "123",
+                    "peerPort": 6056,
+                    "peerOperationPort": "16056",
+                    "chainCodePort": 6057,
+                    "couchdbPort": 6058,
+>>>>>>> e9689cefdb87e0ce1ccdb16273c8c2fd66b87206
                     "peerMSPID": "company.a.msp"
                 },
                 {

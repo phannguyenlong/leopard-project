@@ -1,0 +1,104 @@
+<head>
+    <script>
+        fetch("http://localhost:8080/api/auth/adminAuth").then(res => {
+            if(res.status != 200) {
+            window.location.href = "http://localhost:8080/login.html?message=Root Admin only";
+            }
+        })
+    </script>
+        <title>Admin Dashboard | Channels</title>
+        <link rel="stylesheet" href="../../css/dashboard.css" />
+        <link rel="stylesheet" href="./index.css" />
+        <link rel="stylesheet" href="./styles.css" />
+        <script src="channelList.js"></script>
+    </head>
+    <body>
+        <div id="header">
+          <img id="logo" src="../../asset/images/grey_logo.svg" width="50px" />
+          <p id="headerText">Channel</p>
+          <button class="btn logout">
+            <a style="text-decoration: none;color: inherit;" href="/api/auth/logout"
+              >Log out</a
+            >
+          </button>
+        </div>
+    
+        <!--Side bar button-->
+        <div id="midContainer">
+          <div id="sidebar">
+            <a style="text-decoration: none;color: inherit" href="/dashboard/network">
+              <div class="sidebarContent highlightSelected">
+                <img src="../../asset/images/network.png" width="30px"/>
+                <p>Network</p>
+              </div>
+            </a>
+            <a style="text-decoration: none;color: inherit" href="/dashboard/database">
+              <div class="sidebarContent">
+                <img src="../../asset/images/database.svg" width="30px"/>
+                <p>Database</p>
+              </div>
+            </a>
+        </div class="sidebarContent">
+        
+        <!--Content-->
+        <div class="sectionContainer">
+          <h1 class="sectionHeader">CHANNELS</h1>
+            <div class="channelCount">
+                <strong>Channel count:</strong>
+                <span>2</span>
+            </div>
+            
+            <div class="killChannel">
+                <strong>Kill all channel</strong>
+                <button type="button" class="button negativeButton">OK</button>
+            </div>
+            
+            <div class="searchListElements">
+                <span class="listName">Channel list</span>
+    
+                <!-- <span class="inputBoxHolder">
+                  <input type="text" class="inputBox" placeholder="channel name">
+                </span> -->
+                
+                <span>
+                  <a href="../ChannelCreation/index.html">
+                    <button type="button" class="button utilButton newButton">
+                      <img src="../../asset/images/new.svg" width="15px" class="newBtnImage">
+                      <span class="newButtonTxt">New</span>
+                    </button>
+                  </a>
+                </span>
+            </div>
+        
+        <div id="channelList">
+            <div class="row">
+                <span class="rowContent">
+                    <span>1</span>
+                    <span>myChannel</span>
+                </span>
+                
+                <span>
+                    <button class="btn negativeButton">Kill</button>
+                    <button class="btn utilButton">
+                    <a href="channelUtils/channelDetail.html">More Details</a>
+                    </button>
+                </span>
+            </div>
+    
+            <div class="row">
+                <span class="rowContent">
+                    <span>2</span>
+                    <span>myChannel2</span>
+                </span>
+                
+                <span>
+                    <button class="btn negativeButton">Kill</button>
+                    <button class="btn utilButton">
+                    <a href="channelUtils/channelDetail.html">More Details</a>
+                    </button>
+                </span>
+            </div>
+        </div>
+        </div>
+    </body>
+    
