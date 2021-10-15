@@ -2,10 +2,10 @@
 
 // const {  } = require("../../../channel-utils/Organizations");
 var tabledata = []
-fetch("http://localhost:8080/api/auth/").then(res => {
-      if (res.status != 200) {
-        window.location.href = "http://localhost:8080/login.html";
-      }
+fetch("http://localhost:8080/api/auth/adminAuth").then(res => {
+        if(res.status != 200) {
+        window.location.href = "http://localhost:8080/login.html?message=Root Admin only";
+        }
     })
 
 var table = new Tabulator("#channelTable",{
