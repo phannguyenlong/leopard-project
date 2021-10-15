@@ -114,7 +114,7 @@ async function getData(){
     var isValid = true
     for(let i=0;i<dataInput.length;i++){
         console.log(username,orderer,port)
-
+        
         if(dataInput[i]["isOrderer"] == true){
             orderer+=1
         }
@@ -134,16 +134,13 @@ async function getData(){
                 isValid=false
                 break
             }
-            if(orderer!=1){
-                makeAlert("error","Just 1 Orderer")
-                isValid=false
-                break
-            }
-            
         }
         dataInput[i]["channel_name"] = channelName
-        isValid = true
-        
+    }
+    isValid = true
+    if(orderer!=1){
+        makeAlert("error","Just 1 Orderer")
+        isValid=false
     }
 
     if(isValid==true){

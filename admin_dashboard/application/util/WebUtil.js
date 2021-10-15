@@ -59,5 +59,6 @@ exports.getLoginUser = function () {
  * @returns object of channel config (peer and orderer)
  */
 exports.getChannelConfig = function () {
+    load
     return channelList
 }

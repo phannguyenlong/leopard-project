@@ -7,7 +7,7 @@
  const router = express.Router();
  var glob = require("glob")
  const fs = require("fs")
-const { getChannelConfig, getLoginUser } = require("../util/WebUtil")
+const { getChannelConfig, getLoginUser,loadChannelConfig } = require("../util/WebUtil")
 const { createChannel } = require("../channel-utils/channelInteract")
 const { deployCC } = require("../channel-utils/deployChaincode")
 const { OrdererOrganization, PeerOrganization, Channel } = require("../../application/channel-utils/Organizations")
@@ -18,13 +18,16 @@ const { creatPeerAndCA, createOrdererAndCA } = require("../channel-utils/channel
  
 
  router.get('/getAllChannelName',async function(req,res){
-    var namesChannels = glob.sync("../../leopard-network/docker/*")
+    let file = fs.readFileSync(__dirname+"/../../server-config/server-config.json")
+    var data = JSON.parse(file).channels
+    var namesChannels = Object.keys(data)
+
     var output=[]
     for(let i=0;i<namesChannels.length;i++){
-        let channel_name = namesChannels[i].split("/")
+        let channel_name = namesChannels[i]
         let channel = {}
         channel["index"]=i+1
-        channel["channelName"] = channel_name[channel_name.length-1]
+        channel["channelName"] = channel_name
         output.push(channel)
     }
     console.log(output)

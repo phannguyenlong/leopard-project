@@ -8,9 +8,9 @@ async function getAllChannelName(url)
     const dataContainer = await fetch(url);
     var data = await dataContainer.json();
     
-    console.log(data);
-    console.log("Index: "+data[0].index);
-    console.log("Name: " +data[0].channelName)
+    console.log("Data:",data);
+    // console.log("Index: "+data[0].index);
+    // console.log("Name: " +data[0].channelName)
     loadChannelList(data);
 }
 
@@ -29,7 +29,7 @@ function loadChannelList(data)
           	<span>
 		  	<button class="btn negativeButton">Kill</button>
 		  	<button class="btn utilButton">
-			    <a href=../channelDetail/index.html?channel_name=${data[i].channelName}>More Details</a>
+			    <a href=channelDetail/index.html?channel_name=${data[i].channelName}>More Details</a>
 			</button>
           	</span>  
           </div>`;
