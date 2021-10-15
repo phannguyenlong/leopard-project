@@ -10,16 +10,16 @@
             "channelName": "channel1",
             "orderer": {
                 "orgName": "Company C",
-                "caAdmin": "orderer",
-                "caPassword": "123",
+                "caAdmin": "adminC",
+                "caPassword": "pass",
                 "channelName": "channel1",
-                "caPort": 9055,
-                "caOperationPort": "19055",
-                "ordererAdmin": "peer3",
-                "ordererPassword": "123",
-                "ordererPort": 9056,
-                "ordererOperationPort": "19056",
-                "ordererAdminPort": 9057,
+                "caPort": 8054,
+                "caOperationPort": "18054",
+                "ordererAdmin": "peerC",
+                "ordererPassword": "pass",
+                "ordererPort": 8055,
+                "ordererOperationPort": "18055",
+                "ordererAdminPort": 8056,
                 "ordererMSPID": "orderer.company.c.msp"
             },
             "peers": [
@@ -40,18 +40,67 @@
                 },
                 {
                     "orgName": "Company A",
-                    "caAdmin": "user1",
-                    "caPassword": "123",
+                    "caAdmin": "adminA",
+                    "caPassword": "pass",
                     "channelName": "channel1",
-                    "caPort": 6055,
-                    "caOperationPort": "16055",
-                    "peerAdmin": "peer1",
-                    "peerPassword": "123",
-                    "peerPort": 6056,
-                    "peerOperationPort": "16056",
-                    "chainCodePort": 6057,
-                    "couchdbPort": 6058,
+                    "caPort": 6054,
+                    "caOperationPort": "16054",
+                    "peerAdmin": "peerA",
+                    "peerPassword": "pass",
+                    "peerPort": 6055,
+                    "peerOperationPort": "16055",
+                    "chainCodePort": 6056,
+                    "couchdbPort": 6057,
                     "peerMSPID": "company.a.msp"
+                },
+                {
+                    "orgName": "Company B",
+                    "caAdmin": "adminB",
+                    "caPassword": "pass",
+                    "channelName": "channel1",
+                    "caPort": 7054,
+                    "caOperationPort": "17054",
+                    "peerAdmin": "peerB",
+                    "peerPassword": "pass",
+                    "peerPort": 7055,
+                    "peerOperationPort": "17055",
+                    "chainCodePort": 7056,
+                    "couchdbPort": 7057,
+                    "peerMSPID": "company.b.msp"
+                }
+            ]
+        },
+        "channel2": {
+            "channelName": "channel2",
+            "orderer": {
+                "orgName": "Company E",
+                "caAdmin": "adminE",
+                "caPassword": "pass",
+                "channelName": "channel2",
+                "caPort": 8074,
+                "caOperationPort": "18074",
+                "ordererAdmin": "peerE",
+                "ordererPassword": "pass",
+                "ordererPort": 8075,
+                "ordererOperationPort": "18075",
+                "ordererAdminPort": 8076,
+                "ordererMSPID": "orderer.company.e.msp"
+            },
+            "peers": [
+                {
+                    "orgName": "Company F",
+                    "caAdmin": "adminF",
+                    "caPassword": "pass",
+                    "channelName": "channel2",
+                    "caPort": 6074,
+                    "caOperationPort": "16074",
+                    "peerAdmin": "peerF",
+                    "peerPassword": "pass",
+                    "peerPort": 6075,
+                    "peerOperationPort": "16075",
+                    "chainCodePort": 6076,
+                    "couchdbPort": 6077,
+                    "peerMSPID": "company.f.msp"
                 }
             ]
         }
