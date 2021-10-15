@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="./style.css" />
     <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body>
@@ -45,7 +47,7 @@
     <div class="sectionContainer">
         <div class="inputBoxHolder">
             <strong>Channel name:</strong>
-            <input type="text" class="inputBox" placeholder="mychannel">
+            <input type="text" class="inputBox" placeholder="mychannel" id="channelName">
         </div>
 
         <div class="tableHolder">
@@ -66,8 +68,8 @@
             <script src="tabulator.js"></script>
 
          <div class="bottomBtnHolder">
+            <button type="button" class="button positiveButton" onclick="getData()">Create</button>
              <a href="../index.html">
-                <button type="button" class="button positiveButton">Create</button>
                 <button type="button" class="button negativeButton">Cancel</button>
              </a>
          </div>

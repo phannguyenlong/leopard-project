@@ -1,26 +1,15 @@
-var tabledata = [
-    {
-        "Org_name":"company1", 
-        "CA_username":"certiauth",
-        "CA_password":"bobo",
-        "peer_username":"peer0",
-        "peer_password":"12345",
-        "channel_name":"channel1",
-        "port_number":"0000"
-    },
-    {
-        "Org_name":"company2", 
-        "CA_username":"certiauth",
-        "CA_password":"12345",
-        "peer_username":"peer0",
-        "peer_password":"12345",
-        "channel_name":"channel1",
-        "port_number":"0000"
-    },
-];
+// const { main } = require("../../../main");
+
+// const {  } = require("../../../channel-utils/Organizations");
+var tabledata = []
+fetch("http://localhost:8080/api/auth/").then(res => {
+      if (res.status != 200) {
+        window.location.href = "http://localhost:8080/login.html";
+      }
+    })
 
 var table = new Tabulator("#channelTable",{
-    data:tabledata,
+    data:tabledata, 
     layout:"fitColumns",
     responsiveLayout:"hide",
     addRowPos:"bottom",
@@ -45,7 +34,7 @@ var table = new Tabulator("#channelTable",{
         },
         {
             title:"CA username", 
-            field:"channel_name",
+            field:"CA_username",
             editor:"input",
             sorter:"string",
         },
@@ -68,12 +57,6 @@ var table = new Tabulator("#channelTable",{
             sorter:"string",
         },
         {
-            title:"Channel name", 
-            field:"channel_name",
-            editor:"input",
-            sorter:"string",
-        },
-        {
             title:"Port number", 
             field:"port_number",
             editor:"input",
@@ -81,6 +64,7 @@ var table = new Tabulator("#channelTable",{
         },
         {
             title: 'Orderer',
+            field:"isOrderer",
             formatter: 'tickCross',
             cellClick: function(ev, cell){
                     if (ev.target.nodeName === 'svg' || ev.target.nodeName === 'path'){
@@ -105,7 +89,13 @@ var nameFilter = document.getElementById("nameFilter");
 // {
 //     table.setFilter("channel_name", "like", nameFilter.value);
 // }
-
+function makeAlert(type, title) {
+    Swal.fire({
+      title: title,
+      icon: type,
+      confirmButtonColor: '#3085d6',
+    })
+  }
 function addData()
 {
     table.addData([{}],true);
@@ -114,3 +104,61 @@ function addData()
 
 //document.getElementById("nameFilter").addEventListener("change", filterTable);
 document.getElementById("addMemberBtn").addEventListener("click", addData);
+async function getData(){
+    var dataInput = table.getData(true)
+
+    var channelName = document.getElementById("channelName").value 
+    var orderer=0
+    var username = []
+    var port = []
+    var isValid = true
+    for(let i=0;i<dataInput.length;i++){
+        console.log(username,orderer,port)
+
+        if(dataInput[i]["isOrderer"] == true){
+            orderer+=1
+        }
+        if(dataInput[i]["CA_username"]==dataInput[i]["peer_username"]){
+            makeAlert("error", "CA username and peer username must't be identical")
+            isValid=false
+            break
+        }
+        else{
+            if(username.indexOf(dataInput[i]["CA_username"])==-1 && username.indexOf(dataInput[i]["peer_username"])==-1 && port.indexOf(parseInt(dataInput[i]["port_number"]))==-1){
+                username.push(dataInput[i]["CA_username"])
+                username.push(dataInput[i]["peer_username"])
+                port.push(parseInt(dataInput[i]["port_number"]))
+            }
+            else{
+                makeAlert("error", "CA username, peer username or port number has existed")
+                isValid=false
+                break
+            }
+            if(orderer!=1){
+                makeAlert("error","Just 1 Orderer")
+                isValid=false
+                break
+            }
+            
+        }
+        dataInput[i]["channel_name"] = channelName
+        isValid = true
+        
+    }
+
+    if(isValid==true){
+        const response = await fetch(`http://localhost:8080/api/network/createChannel`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(dataInput)
+        })
+        if (response.status == 200) makeAlert("success", "Update Sucess")
+        else makeAlert("error", "Update error")
+    }
+    
+    
+
+    
+}
