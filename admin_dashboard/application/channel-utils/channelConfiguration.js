@@ -71,7 +71,6 @@ async function createConfigtx(peer) {
     shell.exec(`configtxgen -printOrg ${companyname}.msp > ${NETWORK_PATH}/channel-artifacts/${peer.getNormalizeChannel}/${companyname}.json`)
     console.log('JSONified success');
     chdir(filePath) // then set it again to prevent error
-    console.log('sth sth');
 }
 
 async function fetchConfig(PeerOrganization, OrdererOrganization) {
@@ -106,7 +105,6 @@ async function encodeJSONtoPB(blockName, channelName) {
     // blockName = name of the block to be decode
 
     shell.env["PATH"] = NETWORK_PATH + `../bin/:` + shell.env["PATH"] // set path to bin
-    console.log('sth1');
     // Convert config json back to pb
     shell.exec(`configtxlator proto_encode --input ${NETWORK_PATH}/channel-artifacts/${channelName}/${blockName}.json --type common.Config --output ${NETWORK_PATH}/channel-artifacts/${channelName}/${blockName}.pb`)
     console.log(`encode ${blockName}.pb to ${blockName}.json done`);
@@ -129,7 +127,6 @@ async function updateConfig(configName, companyName, channelName) {
 
     myObject1.channel_group.groups.Application.groups[`${companyName}.msp`] = myObject2
     fs.writeFileSync(path + "modified_config.json", JSON.stringify(myObject1, null, 4)) //
-    console.log('sth sth');
 }
 
 //delete the org*.json to config.json
@@ -234,6 +231,24 @@ async function submitConfigDemo(originalBlock, modifiedBlock, Channel) {
     }
 }
 
+async function cleanFiles(Channel){
+    let CLEANING_PATH = NETWORK_PATH + `/channel-artifacts/${Channel.getNormalizeChannel}/`
+    fs.readdir(CLEANING_PATH, (err, files) => {
+        if (err) {
+            console.log(err);
+        }
+    
+        files.forEach(file => {
+            const fileDir = path.join(CLEANING_PATH, file);
+    
+            if (file !== 'genesis_block.pb') {
+                fs.unlinkSync(fileDir);
+            }
+        });
+    });
+    
+}
+
 // write main here to demo
 async function addOrg(PeerOrganization, Channel) {
     // Prerequisite: need core.yaml in channel-config/${channelName}
@@ -253,6 +268,7 @@ async function addOrg(PeerOrganization, Channel) {
     await submitConfigDemo("config_block", "modified_config", Channel)
     // // // join the peer into the channel
     await PeerJoinChannel(PeerOrganization, Channel.orderer)
+    await cleanFiles(Channel)
 }
 
 async function removeOrg(PeerOrganization, Channel) {
@@ -269,6 +285,7 @@ async function removeOrg(PeerOrganization, Channel) {
     await encodeJSONtoPB("modified_config", `${Channel.getNormalizeChannel}`)
     // // fifth, run the demo submit&sign
     await submitConfigDemo("config_block", "modified_config", Channel)
+    await cleanFiles(Channel)
     
 }
 
@@ -282,3 +299,4 @@ exports.removeConfig = removeConfig
 exports.encodeJSONtoPB = encodeJSONtoPB
 exports.submitConfigDemo = submitConfigDemo
 exports.PeerJoinChannel = PeerJoinChannel
+exports.cleanFiles = cleanFiles
