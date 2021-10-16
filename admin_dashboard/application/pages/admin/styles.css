@@ -94,8 +94,6 @@ button:hover
 
 .sectionContainer
 {
-    display: flex;
-    flex-flow: column wrap;
     width: 100%;
     font-size: 1.2em;
     margin: 80px 10px 10px 110px;
