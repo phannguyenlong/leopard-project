@@ -11,3 +11,15 @@ rm -r docker/*
 rm -r channel-artifacts/*
 rm -r channel-config/*
 rm -r tmp/*
+
+echo '
+{
+    "rootAdmins": [
+        {
+            "username": "rootAdmin",
+            "password": "password"
+        }
+    ],
+    "channels": {}
+}
+' > ../admin_dashboard/server-config/server-config.json
