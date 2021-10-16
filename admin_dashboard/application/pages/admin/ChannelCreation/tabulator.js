@@ -157,7 +157,9 @@ async function getData(){
           body: JSON.stringify(dataInput)
         })
         if (response.status == 200) makeAlert("success", "Update Sucess")
-        else makeAlert("error", `Update error ${response.statusText} `)
+        else response.text().then(text => {
+            makeAlert("error", text)
+        })
     }
     
     
