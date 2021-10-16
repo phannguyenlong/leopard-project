@@ -7,7 +7,7 @@
  const router = express.Router();
  var glob = require("glob")
  const fs = require("fs")
-const { getChannelConfig, getLoginUser,loadChannelConfig } = require("../util/WebUtil")
+const { loadChannelConfig, generateSchema } = require("../util/WebUtil")
 const { createChannel } = require("../channel-utils/channelInteract")
 const { deployCC } = require("../channel-utils/deployChaincode")
 const { OrdererOrganization, PeerOrganization, Channel } = require("../../application/channel-utils/Organizations")
@@ -90,7 +90,8 @@ const shell = require('shelljs');
      
  })
 router.post("/createChannel", async function (req, res) {
-    let dataInput = req.body
+    let dataInput = req.body.channel
+    let schemaInput = req.body.schema
     let file = fs.readFileSync(__dirname+"/../../server-config/server-config.json")
     var data = JSON.parse(file).channels
     var oldChannelNames = Object.keys(data)
@@ -153,15 +154,24 @@ router.post("/createChannel", async function (req, res) {
             await deployCC(channel.channelName,"admin_dashboard/chaincode/admin-chaincode")
             console.log(peers, orderer, channel)
             
+            // update channelList
+            loadChannelConfig() // load channel config file
+
+            // creat schema config
+            let schema = { titles: [], required: [] }
+            for (let i = 0; i < schemaInput.length; i++) {
+                let field = schemaInput[i]
+                schema.titles.push({ name: field.title, type: field.type })
+                if (field.isRequired) schema.required.push(field.title)
+            }
+            generateSchema(dataInput[0]["channel_name"], schema)
+
             res.sendStatus(200)
         }
-        
     }
     else{
         res.sendStatus(500).send("Channel name has existed")
     }
-
-    
 })
 router.get('/downChannel',async function(req,res){
     var channel = req.query.channel_name
@@ -171,7 +181,7 @@ router.get('/downChannel',async function(req,res){
     delete data[channel]
     file["channels"] = data
     console.log(file)
-    fs.writeFileSync(__dirname+"/../../server-config/server-config.json",JSON.stringify(file))
+    fs.writeFileSync(__dirname+"/../../server-config/server-config.json",JSON.stringify(file, null, 4)) // more redable json
 
     const NETWORK_PATH = __dirname + "/../../../leopard-network"
     const UTIL_PATH = __dirname+"/../" // for comback to this file

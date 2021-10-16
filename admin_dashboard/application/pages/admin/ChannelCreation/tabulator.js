@@ -27,7 +27,7 @@ var table = new Tabulator("#channelTable",{
     columns:
     [
         {
-            title:"Org name", 
+            title:"Organization", 
             field:"Org_name", 
             editor:"input",
             sorter:"string",
@@ -63,49 +63,87 @@ var table = new Tabulator("#channelTable",{
             sorter:"string",
         },
         {
-            title: 'Orderer',
+            title: 'Is orderer?',
             field:"isOrderer",
             formatter: 'tickCross',
             cellClick: function(ev, cell){
-                    if (ev.target.nodeName === 'svg' || ev.target.nodeName === 'path'){
-                cell.setValue(!cell.getValue());
-            } else {
-                // You clicked whitespace, not the actual icon.
+                if (ev.target.nodeName === 'svg' || ev.target.nodeName === 'path'){
+                    cell.setValue(!cell.getValue());
+                } else {
+                    // You clicked whitespace, not the actual icon.
+                }
             }
-            }
-        },
-        {
-            formatter:"buttonCross", 
-            width:60, 
-            align:"center", 
-            cellClick:function(e, cell){
-                cell.getRow().delete();}
-        },
+        }
     ] 
 });
 
-var nameFilter = document.getElementById("nameFilter");
-// function filterTable()
-// {
-//     table.setFilter("channel_name", "like", nameFilter.value);
-// }
+var schemaTable = new Tabulator("#schemaTable",{
+    data:tabledata, 
+    layout:"fitColumns",
+    responsiveLayout:"hide",
+    addRowPos:"bottom",
+    history:true,
+    pagination:"local",
+    paginationSize:7,         //allow 7 rows per page of data
+    movableColumns:true,      //allow column order to be changed
+    resizableRows:true,       //allow row order to be changed
+    validationMode: "highlight",
+    printAsHtml: true,
+    initialSort:
+    [             //set the initial sort order of the data
+        {column:"name", dir:"asc"},
+    ],
+    columns:
+    [
+        {
+            title:"Field value", 
+            field:"title", 
+            editor:"input",
+            sorter: "string",
+            validator: "required" 
+        },
+        {
+            title:"Field type", 
+            field:"type",
+            editor: "select",
+            editorParams: { values: { string: "string", integer: "integer" } },
+            validator: "required" 
+        },
+        {
+            title: 'Required',
+            field: "isRequired",
+            validator: "required",
+            formatter: 'tickCross',
+            cellClick: function(ev, cell){
+                if (ev.target.nodeName === 'svg' || ev.target.nodeName === 'path'){
+                    cell.setValue(!cell.getValue());
+                } else {
+                    // You clicked whitespace, not the actual icon.
+                }
+            }
+        }
+    ] 
+});
+// mock column
+table.addData([{}],true)
+schemaTable.addData([{}],true)
+
 function makeAlert(type, title) {
     Swal.fire({
       title: title,
       icon: type,
       confirmButtonColor: '#3085d6',
     })
-  }
-function addData()
-{
-    table.addData([{}],true);
-    console.log(table)
 }
 
-//document.getElementById("nameFilter").addEventListener("change", filterTable);
-document.getElementById("addMemberBtn").addEventListener("click", addData);
+document.getElementById("addMemberBtn").addEventListener("click", () =>  table.addData([{}],true));
+document.getElementById("addFieldBtn").addEventListener("click", () =>  schemaTable.addData([{}],true));
+
 async function getData(){
     var dataInput = table.getData(true)
+    var schemaInput = schemaTable.getData(true)
+
+    console.log(schemaInput)
 
     var channelName = document.getElementById("channelName").value 
     var orderer=0
@@ -113,9 +151,7 @@ async function getData(){
     var port = []
     var isValid = true
 
-    for(let i=0;i<dataInput.length;i++){
-        console.log(username,orderer,port)
-        
+    for(let i=0;i<dataInput.length;i++){ 
         if(dataInput[i]["isOrderer"] == true){
             orderer+=1
         }
@@ -148,21 +184,24 @@ async function getData(){
         isValid=false
     }
 
+    if (schemaTable.validate() != true) {
+        makeAlert("error", "Wrong data type of data schema")
+        isValid = false
+    }
+    let submitData = { channel: dataInput, schema: schemaInput}
+
+    console.log(submitData)
     if(isValid==true){
         const response = await fetch(`http://localhost:8080/api/network/createChannel`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(dataInput)
+          body: JSON.stringify(submitData)
         })
         if (response.status == 200) makeAlert("success", "Update Sucess")
         else response.text().then(text => {
             makeAlert("error", text)
         })
-    }
-    
-    
-
-    
+    }    
 }

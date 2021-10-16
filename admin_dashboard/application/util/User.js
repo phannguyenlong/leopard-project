@@ -113,6 +113,14 @@ class User {
 
         return caClient
     }
+
+    get getNormalizeOrg() {
+        return this.organization.replace(" ", ".").toLowerCase();
+    }
+    
+    get getNormalizeChannel() {
+        return this.channelName.replace(" ", ".").toLowerCase()
+    }
 }
 
 exports.User = User

@@ -142,7 +142,7 @@ router.post("/addData", async function (req, res) {
     const gateway = new Gateway()
     let user = getLoginUser()[req.cookies.session]
     let data = req.body
-    if (!validateSchema(data)) {
+    if (!validateSchema(data, user.getNormalizeChannel)) {
         res.status(500).send("Unvalid data type")
     }
     try {
@@ -161,7 +161,8 @@ router.post("/addData", async function (req, res) {
 // GET /api/ledger/fakeData
 // Use for generate fake object from user define schema
 router.get("/fakeData", async function (req, res) {
-    let obj = await generateFakeObject()
+    let user = getLoginUser()[req.cookies.session]
+    let obj = await generateFakeObject(user.getNormalizeChannel)
     res.status(200).json(obj)
 })
 

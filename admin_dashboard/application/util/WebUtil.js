@@ -12,23 +12,48 @@ const {Channel, OrdererOrganization, PeerOrganization} = require("../channel-uti
 let loginUser = {} // object for holding all logged in user to channel
 let channelList = {} // object for holding all the existing channel on the network
 
-exports.validateSchema = async function (object) {
+exports.validateSchema = async function (object, channel) {
     const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
-    let file = fs.readFileSync("../server-config/mychannel_schema.json")
+    let file = fs.readFileSync( __dirname + `/../../server-config/${channel}_schema.json`)
     const validate = ajv.compile(JSON.parse(file))
 
     return validate(object)
 }
 
-exports.generateFakeObject = function () {
-    let file = fs.readFileSync( __dirname + "/../../server-config/mychannel_schema.json")
+exports.generateSchema = async function generateSchema(channleName, schemaObject) {
+    const schema = {
+		"type": "object",
+		"properties": {
+			"productID": {"type": "string"},
+			"productType": {"type": "string"},
+			"productDescription": {"type": "string"},
+			"numberOfProcedure": {"type": "integer"},
+			"procedures": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {}
+				}
+			}
+		},
+		"additionalProperties": false
+    }
+    for (let i = 0; i < schemaObject.titles.length; i++) {
+        schema.properties.procedures.items.properties[schemaObject.titles[i].name] = { type: schemaObject.titles[i].type }
+    }
+    schema.properties.procedures.required =  schemaObject.required
+    fs.writeFileSync(__dirname + `/../../server-config/${channleName}_schema.json`, JSON.stringify(schema, null, 4))
+}
+
+exports.generateFakeObject = function (channel) {
+    let file = fs.readFileSync( __dirname + `/../../server-config/${channel}_schema.json`)
     jsf.option({ alwaysFakeOptionals: true, maxItems: 1 }) // fill up all field
     let object = jsf.generate(JSON.parse(file.toString()))
     return object
 }
 
 exports.loadChannelConfig = async function () {
-    let file = fs.readFileSync("../server-config/server-config.json")
+    let file = fs.readFileSync( __dirname + "/../../server-config/server-config.json")
     channelList = JSON.parse(file).channels
 }
 
@@ -59,6 +84,5 @@ exports.getLoginUser = function () {
  * @returns object of channel config (peer and orderer)
  */
 exports.getChannelConfig = function () {
-    load
     return channelList
 }
