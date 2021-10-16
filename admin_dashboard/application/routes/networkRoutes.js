@@ -12,6 +12,7 @@ const { createChannel } = require("../channel-utils/channelInteract")
 const { deployCC } = require("../channel-utils/deployChaincode")
 const { OrdererOrganization, PeerOrganization, Channel } = require("../../application/channel-utils/Organizations")
 const { creatPeerAndCA, createOrdererAndCA } = require("../channel-utils/channelComponent")
+const shell = require('shelljs');
 
  const { spawn } = require('child_process');
 // const { main } = require("../main");
@@ -162,7 +163,24 @@ router.post("/createChannel", async function (req, res) {
 
     
 })
+router.get('/downChannel',async function(req,res){
+    var channel = req.query.channel_name
+    let file = JSON.parse(fs.readFileSync(__dirname+"/../../server-config/server-config.json"))
+    var data = file.channels
+    console.log(data[channel])
+    delete data[channel]
+    file["channels"] = data
+    console.log(file)
+    fs.writeFileSync(__dirname+"/../../server-config/server-config.json",JSON.stringify(file))
 
+    const NETWORK_PATH = __dirname + "/../../../leopard-network"
+    const UTIL_PATH = __dirname+"/../" // for comback to this file
+    shell.exec("pwd")
+    shell.exec(`bash -c 'cd ${NETWORK_PATH}/scripts; ./downComponent.sh channel ${channel}; cd ${UTIL_PATH};pwd; exit'`)
+    
+    res.redirect("http://localhost:8080/admin/")
+
+})
 
 
  router.get('/show_detail' ,async function (req, res) {

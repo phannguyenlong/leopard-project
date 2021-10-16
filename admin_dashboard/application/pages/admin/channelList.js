@@ -28,7 +28,8 @@ function loadChannelList(data)
           		<span>${data[i].channelName}</span>
           	</span>
           	<span>
-		  	<button class="btn negativeButton">Kill</button>
+		  	<button class="btn negativeButton">
+              <a href=http://localhost:8080/api/network/downChannel?channel_name=${data[i].channelName}>Kill</a></button>
 		  	<button class="btn utilButton">
 			    <a href=channelDetail/index.html?channel_name=${data[i].channelName}>More Details</a>
 			</button>
