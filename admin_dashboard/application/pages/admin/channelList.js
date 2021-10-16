@@ -18,6 +18,7 @@ function loadChannelList(data)
 {
     var tab = '';
     let i = 0;
+    document.getElementById("numberChannel").innerHTML = data.length
     for (let obj in data)
     {
         tab +=

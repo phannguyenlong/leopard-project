@@ -36,8 +36,10 @@ const { creatPeerAndCA, createOrdererAndCA } = require("../channel-utils/channel
 
  router.get('/showChannelDetail',async function(req,res){
     var requestChannel = req.query.channel_name
-    var channelConfig = getChannelConfig()
-    var channel = channelConfig[requestChannel]
+    let file = fs.readFileSync(__dirname+"/../../server-config/server-config.json")
+    var data = JSON.parse(file).channels
+    console.log(data[requestChannel])
+    var channel = data[requestChannel]
     var orderer = channel["orderer"]
     var peers = channel["peers"]
 
@@ -88,38 +90,77 @@ const { creatPeerAndCA, createOrdererAndCA } = require("../channel-utils/channel
  })
 router.post("/createChannel", async function (req, res) {
     let dataInput = req.body
-    console.log("Body: ",dataInput)
+    let file = fs.readFileSync(__dirname+"/../../server-config/server-config.json")
+    var data = JSON.parse(file).channels
+    var oldChannelNames = Object.keys(data)
 
-    var peers = []
-    var orderer;
-    console.log(dataInput)
-    var countOrderer=0
-    for(let i=0;i<dataInput.length;i++){
-        if(dataInput[i]["isOrderer"]==true){
-            countOrderer+=1
-            orderer=new OrdererOrganization(dataInput[i]["Org_name"],dataInput[i]["CA_username"],dataInput[i]["CA_password"],
-                                            dataInput[i]["peer_username"],dataInput[i]["peer_password"],dataInput[i]["channel_name"],parseInt(dataInput[i]["port_number"]))
+    var oldPorts = []
+    var oldOrgNames = []
+    for(let i=0;i<oldChannelNames.length;i++){
+        var oldChannel = data[oldChannelNames[i]]
+        var orderer = oldChannel["orderer"]
+        oldPorts.push(orderer["ordererPort"])
+        oldOrgNames.push(orderer["orgName"])
+
+        var peers = oldChannel["peers"]
+        for(let j=0;j<peers.length;j++){
+            oldPorts.push(peers[j]["peerPort"])
+            oldOrgNames.push(peers[j]["orgName"])
         }
-        else{
-            peers.push(new PeerOrganization(dataInput[i]["Org_name"],dataInput[i]["CA_username"],dataInput[i]["CA_password"],
-            dataInput[i]["peer_username"],dataInput[i]["peer_password"],dataInput[i]["channel_name"],parseInt(dataInput[i]["port_number"])))
+
+    }
+    console.log(oldPorts)
+    console.log(oldOrgNames)
+    console.log(oldChannelNames)
+    if(oldChannelNames.indexOf(dataInput[0]["channel_name"])==-1){
+        var peers = []
+        var orderer;
+        console.log(dataInput)
+        var isError=false
+        for(let i=0;i<dataInput.length;i++){
+            if(oldOrgNames.indexOf(dataInput[i]["Org_name"]) !=-1){
+                res.status(500).send(` Name: ${dataInput[i]["Org_name"]} has existed `)
+                isError=true
+                break
+            }
+            if(oldPorts.indexOf(parseInt(dataInput[i]["port_number"])) !=-1){
+                res.status(500).send(` Port: ${dataInput[i]["port_number"]} has existed `)
+                isError=true
+                break
+            }
+            if(dataInput[i]["isOrderer"]==true){
+                orderer=new OrdererOrganization(dataInput[i]["Org_name"],dataInput[i]["CA_username"],dataInput[i]["CA_password"],
+                                                dataInput[i]["peer_username"],dataInput[i]["peer_password"],dataInput[i]["channel_name"],parseInt(dataInput[i]["port_number"]))
+            }
+            else{
+                peers.push(new PeerOrganization(dataInput[i]["Org_name"],dataInput[i]["CA_username"],dataInput[i]["CA_password"],
+                dataInput[i]["peer_username"],dataInput[i]["peer_password"],dataInput[i]["channel_name"],parseInt(dataInput[i]["port_number"])))
+            }
         }
-    }
-    let channel = new Channel(dataInput[0]["channel_name"],orderer,peers)
-    // await main(orderer,peers,channel)
-    await createOrdererAndCA(orderer)
+        if(isError==false){
+            let channel = new Channel(dataInput[0]["channel_name"],orderer,peers)
+            // await main(orderer,peers,channel)
+            await createOrdererAndCA(orderer)
 
-    // create peer
-    for (let i = 0; i < peers.length; i++) {
-        await creatPeerAndCA(peers[i])
+            // create peer
+            for (let i = 0; i < peers.length; i++) {
+                await creatPeerAndCA(peers[i])
+            }
+
+            // join channel
+            await createChannel(channel)
+            await deployCC(channel.channelName,"admin_dashboard/chaincode/admin-chaincode")
+            console.log(peers, orderer, channel)
+            
+            res.sendStatus(200)
+        }
+        
+    }
+    else{
+        res.sendStatus(500).send("Channel name has existed")
     }
 
-    // join channel
-    await createChannel(channel)
-    await deployCC(channel.channelName,"admin_dashboard/chaincode/admin-chaincode")
-    console.log(peers, orderer, channel)
     
-    res.sendStatus(200)
 })
 
 

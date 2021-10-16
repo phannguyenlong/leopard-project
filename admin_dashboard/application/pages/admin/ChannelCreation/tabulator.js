@@ -112,6 +112,7 @@ async function getData(){
     var username = []
     var port = []
     var isValid = true
+
     for(let i=0;i<dataInput.length;i++){
         console.log(username,orderer,port)
         
@@ -142,6 +143,10 @@ async function getData(){
         makeAlert("error","Just 1 Orderer")
         isValid=false
     }
+    if(channelName===''){
+        makeAlert("error","Input channel name")
+        isValid=false
+    }
 
     if(isValid==true){
         const response = await fetch(`http://localhost:8080/api/network/createChannel`, {
@@ -152,7 +157,7 @@ async function getData(){
           body: JSON.stringify(dataInput)
         })
         if (response.status == 200) makeAlert("success", "Update Sucess")
-        else makeAlert("error", "Update error")
+        else makeAlert("error", `Update error ${response.statusText} `)
     }
     
     
