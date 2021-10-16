@@ -21,7 +21,8 @@ router.get("/", async function (req, res) {
         if (!user) {
             res.sendStatus(401)
         } else {
-            res.sendStatus(200)
+            if (user.isRootAdmin) res.sendStatus(401)
+            else res.sendStatus(200)
         }
     } catch (err) {
         res.status(500).send(err)
@@ -132,7 +133,7 @@ router.get('/logout', async function (req, res) {
     let session = req.cookies.session
 
     let user = getLoginUser()[session]
-    await user.unEnrollUser(session)
+    if (!user.isRootAdmin) await user.unEnrollUser(session)
     delete user
     res.clearCookie("session");
     res.redirect('/login.html')
