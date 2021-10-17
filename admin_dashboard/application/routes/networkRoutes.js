@@ -164,22 +164,22 @@ router.post("/createChannel", async function (req, res) {
             res.setHeader('Content-Type', 'text/event-stream');
             await createOrdererAndCA(orderer)
             await sleep(100)
-            res.write(orderer.orgName+" sucessfully")
+            res.write(orderer.orgName)
             // create peer
             for (let i = 0; i < peers.length; i++) {
                 await creatPeerAndCA(peers[i])
                 await sleep(100)
-                res.write(peers[i].orgName+" sucessfully")
+                res.write(peers[i].orgName)
 
             }
 
             // join channel
             await createChannel(channel)
             await sleep(100)
-            res.write("Channel is ready")
+            res.write("Channel")
             await sleep(100)
             await deployCC(channel.channelName,"admin_dashboard/chaincode/admin-chaincode")
-            res.write("Deloy sucessfully chaincode ")
+            res.write("Deploy")
             console.log(peers, orderer, channel)
             
             // update channelList

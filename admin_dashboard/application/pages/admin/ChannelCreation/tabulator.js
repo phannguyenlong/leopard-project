@@ -192,6 +192,28 @@ async function getData(){
 
     console.log(submitData)
     if(isValid==true){
+        var log = {}
+        var Objlog = document.getElementById("log")
+        for(let i=0;i<dataInput.length;i++){
+            let orgNameUnderscore = String(dataInput[i]["Org_name"]).replace(" ","_")
+            log[orgNameUnderscore] = ""
+            // Objlog.innerHTML+=`<p id=log_${orgNameUnderscore}><b>${dataInput[i]["Org_name"]}</b> :<span class="loading"></span></p>`
+            Objlog.innerHTML+=`<div class=loader id=log_${orgNameUnderscore}><p><b>${dataInput[i]["Org_name"]}</b> :</p><span></span>
+            <span></span>
+            <span></span></div>`
+        }
+        log["Channel"] = ""
+        log["Deploy"] = ""
+        // Objlog.innerHTML+=`<p id=log_Channel><b>Channel</b> :</p>`
+        // Objlog.innerHTML+=`<p id=log_Deploy><b>Deploy</b> :</p>`
+        Objlog.innerHTML+=`<div class=loader id=log_Channel><p><b>Channel</b> :</p><span></span>
+        <span></span>
+        <span></span></div>`
+        Objlog.innerHTML+=`<div class=loader id=log_Deploy><p><b>Deploy</b> :</p><span></span>
+        <span></span>
+        <span></span></div>`
+
+
         var response = await fetch(`http://localhost:8080/api/network/createChannel`, {
           method: 'POST',
           headers: {
@@ -207,9 +229,13 @@ async function getData(){
             if (done) break; // if stream is done, get out of the loop
 
             // deccode data from stream
-            var string = new TextDecoder().decode(value)
+            var stringUnderscore = new TextDecoder().decode(value).replace(" ","_");
+            log[stringUnderscore] = true
+            console.log(stringUnderscore)
+
+            document.getElementById(`log_${stringUnderscore}`).innerHTML=`<div><p><b>${stringUnderscore}</b>: <img src="./greenTick.png" alt="correct" width="32" height="32"></p></div>`
             // print it out
-            console.log('Received', string);
+            console.log('Received', stringUnderscore);
         }
         if (response.status == 200) makeAlert("success", "Update Sucess")
         else {
