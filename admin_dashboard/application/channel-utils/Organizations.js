@@ -50,6 +50,7 @@ class Channel {
         this.channelName = channelName
         this.orderer = orderer
         this.peers = [] // it is a array
+        this.proposedPeers = [] // array of peers not yet in channel
         this.peers = peers
     }
 
@@ -70,6 +71,46 @@ class Channel {
 
         // save back to file
         fs.writeFileSync(filePath, JSON.stringify(configFile, null, 4)) // null, 4 this for beauty
+    }
+
+    async addProposedPeers(peer) {
+        this.proposedPeers.push(peer)
+    }
+    async moveProposedPeer(peer) {
+        for (var iteration = 0; iteration < this.proposedPeers.length; iteration++) {
+            if (this.proposedPeers[iteration].orgName == peer.orgName) {
+                this.proposedPeers.splice(iteration, 1)
+            }
+        }
+        await this.addPeer(peer)
+    }
+    async checkNoDupeName(peer) {
+        for (let iteration = 0; iteration < this.peers.length; iteration++) {
+            if (this.peers[iteration].orgName == peer.orgName) {
+                return false
+            }
+        }
+        for (let iteration = 0; iteration < this.proposedPeers.length; iteration++) {
+            if (this.proposedPeers[iteration].orgName == peer.orgName) {
+                return false
+            }
+        }
+        return true
+    }
+    async getPeer(orgName) {
+        for (let iteration = 0; iteration < this.peers.length; iteration++) {
+            console.log(this.peers[iteration].orgName)
+            if (this.peers[iteration].orgName == orgName) {
+                return this.peers[iteration]
+            }
+        }
+    }
+    async getProposedPeer(orgName) {
+        for (let iteration = 0; iteration < this.peers.length; iteration++) {
+            if (this.proposedPeers[iteration].orgName == orgName) {
+                return this.proposedPeers[iteration]
+            }
+        }
     }
 }
 

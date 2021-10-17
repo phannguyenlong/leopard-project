@@ -20,6 +20,7 @@ let UTIL_PATH = __dirname // for comback to this file
 // submitConfigDemo: after calculating the delta -> config_update.pb -> ready for submit and sign (updated to channel)
 
 async function createConfigtx(peer) {
+    shell.cp('-f', `${UTIL_PATH}/../../../config/core.yaml`, `${NETWORK_PATH}/channel-config/${peer.channelName}`)
     companyname = peer.getNormalizeOrg; // normalize data
 
     let jsonConfig = {
@@ -168,48 +169,11 @@ async function PeerJoinChannel(PeerOrganization, OrdererOrganization) {
     shell.exec(`peer channel join -b ${NETWORK_PATH}/channel-artifacts/${OrdererOrganization.getNormalizeChannel}/block0.block`)
 }
 
-// async function submitConfig(originalBlock, modifiedBlock, channelName) {
-    // this function is for real life implementation
-    // send promt to members in channel
-    // wait till enough signing for update
-    // shell.env["PATH"] = NETWORK_PATH + `../bin:` + shell.env["PATH"] // set path to bin
-    // calculate the delta between these two config protobufs
-    // shell.exec(`configtxlator compute_update --channel_id ${channelName} --original ${NETWORK_PATH}/channel-artifacts/${channelName}/${originalBlock}.pb --updated ${NETWORK_PATH}/channel-artifacts/${channelName}/${modifiedBlock}.pb --output ${NETWORK_PATH}/channel-artifacts/${channelName}/config_update.pb`)
-
-    //unfinished: submit how and signing how
-    // submit logic here
-
-    // signing logic here
-// }
-
-async function submitConfigDemo(originalBlock, modifiedBlock, Channel) {
+async function submitConfigDemo(Channel) {
     // this function is for demo only
     // logic: all peer member of the channel will sign (approve) the change
     // Channel = channel object. Channel we want to approve the modified block
-    shell.env["PATH"] = NETWORK_PATH + `../bin:` + shell.env["PATH"] // set path to bin
-    // calculate the delta between these two config protobufs
-    // config_update.pb is now ready to submit and sign (update the channel config)
-    shell.exec(`configtxlator compute_update --channel_id ${Channel.getNormalizeChannel} --original ${NETWORK_PATH}/channel-artifacts/${Channel.getNormalizeChannel}/${originalBlock}.pb --updated ${NETWORK_PATH}/channel-artifacts/${Channel.channelName}/${modifiedBlock}.pb --output ${NETWORK_PATH}/channel-artifacts/${Channel.getNormalizeChannel}/config_update.pb`)
-
-    shell.exec(`configtxlator proto_decode --input ${NETWORK_PATH}/channel-artifacts/${Channel.getNormalizeChannel}/config_update.pb --type common.ConfigUpdate --output ${NETWORK_PATH}/channel-artifacts/${Channel.getNormalizeChannel}/config_update.json`)
-
-    let json = fs.readFileSync(`${NETWORK_PATH}/channel-artifacts/${Channel.getNormalizeChannel}/config_update.json`)
-    let data = {
-        payload: {
-            header: {
-                channel_header: {
-                    channel_id: Channel.getNormalizeChannel,
-                    type: 2
-                }
-            },
-            data: {
-                config_update: JSON.parse(json.toString())
-            }
-        }
-    }
-    fs.writeFileSync(`${NETWORK_PATH}/channel-artifacts/${Channel.getNormalizeChannel}/config_update_in_envelope.json`, JSON.stringify(data, null, 2))
-
-    shell.exec(`configtxlator proto_encode --input ${NETWORK_PATH}/channel-artifacts/${Channel.getNormalizeChannel}/config_update_in_envelope.json --type common.Envelope --output ${NETWORK_PATH}/channel-artifacts/${Channel.getNormalizeChannel}/conifg_update_in_envelope.pb`)
+    
     for (iterator = 0; iterator < Channel.peers.length; iterator++) {
         let peer = Channel.peers[iterator]
 
@@ -265,6 +229,7 @@ async function addOrg(PeerOrganization, Channel) {
     await encodeJSONtoPB("config_block", `${Channel.getNormalizeChannel}`)
     await encodeJSONtoPB("modified_config", `${Channel.getNormalizeChannel}`)
     // // // // sixth, run the demo submit&sign
+    await deltaFinalBlock("config_block", "modified_config", `${Channel.getNormalizeChannel}`)
     await submitConfigDemo("config_block", "modified_config", Channel)
     // // // join the peer into the channel
     await PeerJoinChannel(PeerOrganization, Channel.orderer)
@@ -299,4 +264,47 @@ exports.removeConfig = removeConfig
 exports.encodeJSONtoPB = encodeJSONtoPB
 exports.submitConfigDemo = submitConfigDemo
 exports.PeerJoinChannel = PeerJoinChannel
+exports.submitConfig = submitConfig
+exports.deltaFinalBlock = deltaFinalBlock
 exports.cleanFiles = cleanFiles
+
+async function submitConfig(PeerOrganization, Channel) {
+    // exported the necessary environment variables to operate as the org admin
+    shell.env["PATH"] = NETWORK_PATH + `../bin/:` + shell.env["PATH"] // set path to bin
+    shell.env["FABRIC_CFG_PATH"] = NETWORK_PATH + `/channel-config/${PeerOrganization.getNormalizeChannel}/`
+    shell.env["CORE_PEER_TLS_ENABLED"] = true // enable TLS
+    shell.env["CORE_PEER_LOCALMSPID"] = `${PeerOrganization.peerMSPID}`
+    shell.env["CORE_PEER_TLS_ROOTCERT_FILE"] = NETWORK_PATH + `/organizations/${PeerOrganization.getNormalizeChannel}/peerOrganizations/${PeerOrganization.getNormalizeOrg}/peers/peer.${PeerOrganization.getNormalizeOrg}/tls/ca.crt`
+    shell.env["CORE_PEER_MSPCONFIGPATH"] = NETWORK_PATH + `/organizations/${PeerOrganization.getNormalizeChannel}/peerOrganizations/${PeerOrganization.getNormalizeOrg}/peers/peer-${PeerOrganization.getNormalizeOrg}/msp/user/admin/msp`
+    shell.env["CORE_PEER_ADDRESS"] = `localhost: ${PeerOrganization.peerPort}`
+    // sign and attemp to update
+    // if not enough endorsement for the policy, update is reject
+    shell.exec(`peer channel update -f ${NETWORK_PATH}/channel-artifacts/${PeerOrganization.getNormalizeChannel}/conifg_update_in_envelope.pb -o localhost:${Channel.orderer.ordererPort} -c ${Channel.getNormalizeChannel} --tls --cafile "${NETWORK_PATH}/organizations/${Channel.getNormalizeChannel}/ordererOrganizations/${Channel.orderer.getNormalizeOrg}/msp/tlscacerts/tls-localhost-${Channel.orderer.caPort}-ca-orderer-${Channel.orderer.getNormalizeOrg.replace(".", "-")}.pem"`)
+}
+
+async function deltaFinalBlock(originalBlock, modifiedBlock, channelName) {
+    shell.env["PATH"] = NETWORK_PATH + `../bin:` + shell.env["PATH"] // set path to bin
+    // calculate the delta between these two config protobufs
+    // config_update.pb is now ready to submit and sign (update the channel config)
+    shell.exec(`configtxlator compute_update --channel_id ${channelName} --original ${NETWORK_PATH}/channel-artifacts/${channelName}/${originalBlock}.pb --updated ${NETWORK_PATH}/channel-artifacts/${channelName}/${modifiedBlock}.pb --output ${NETWORK_PATH}/channel-artifacts/${channelName}/config_update.pb`)
+
+    shell.exec(`configtxlator proto_decode --input ${NETWORK_PATH}/channel-artifacts/${channelName}/config_update.pb --type common.ConfigUpdate --output ${NETWORK_PATH}/channel-artifacts/${channelName}/config_update.json`)
+
+    let json = fs.readFileSync(`${NETWORK_PATH}/channel-artifacts/${channelName}/config_update.json`)
+    let data = {
+        payload: {
+            header: {
+                channel_header: {
+                    channel_id: channelName,
+                    type: 2
+                }
+            },
+            data: {
+                config_update: JSON.parse(json.toString())
+            }
+        }
+    }
+    fs.writeFileSync(`${NETWORK_PATH}/channel-artifacts/${channelName}/config_update_in_envelope.json`, JSON.stringify(data, null, 2))
+
+    shell.exec(`configtxlator proto_encode --input ${NETWORK_PATH}/channel-artifacts/${channelName}/config_update_in_envelope.json --type common.Envelope --output ${NETWORK_PATH}/channel-artifacts/${channelName}/conifg_update_in_envelope.pb`)
+}

@@ -71,6 +71,15 @@ exports.buildChannelObject = function (jsonObj) {
 
     return new Channel(channelName, ordererObj, peersObjc)
 }
+
+exports.buildPeerObject = function (jsonObj, channel) {
+    return new PeerOrganization(jsonObj.orgName, jsonObj.caAdmin, jsonObj.caPassword, jsonObj.peerAdmin, jsonObj.peerPassword, channel, parseInt(jsonObj.portNumber))
+}
+/**
+ * This function is use for shareing loginUser array between routes
+ * @returns list of all logged user to the server atm
+ */
+
 /**
  * This function is use for shareing loginUser array between routes
  * @returns list of all logged user to the server atm
