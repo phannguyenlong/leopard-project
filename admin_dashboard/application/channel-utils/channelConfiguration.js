@@ -173,7 +173,8 @@ async function submitConfigDemo(Channel) {
     // this function is for demo only
     // logic: all peer member of the channel will sign (approve) the change
     // Channel = channel object. Channel we want to approve the modified block
-    
+    shell.env["PATH"] = NETWORK_PATH + `../bin/:` + shell.env["PATH"] // set path to bin
+    shell.env["FABRIC_CFG_PATH"] = NETWORK_PATH + `/channel-config/${Channel.getNormalizeChannel}/`
     for (iterator = 0; iterator < Channel.peers.length; iterator++) {
         let peer = Channel.peers[iterator]
 
@@ -230,7 +231,7 @@ async function addOrg(PeerOrganization, Channel) {
     await encodeJSONtoPB("modified_config", `${Channel.getNormalizeChannel}`)
     // // // // sixth, run the demo submit&sign
     await deltaFinalBlock("config_block", "modified_config", `${Channel.getNormalizeChannel}`)
-    await submitConfigDemo("config_block", "modified_config", Channel)
+    await submitConfigDemo(Channel)
     // // // join the peer into the channel
     await PeerJoinChannel(PeerOrganization, Channel.orderer)
     await cleanFiles(Channel)
@@ -248,8 +249,9 @@ async function removeOrg(PeerOrganization, Channel) {
     // // fourth, encode the 2 blocks back to pb
     await encodeJSONtoPB("config_block", `${Channel.getNormalizeChannel}`)
     await encodeJSONtoPB("modified_config", `${Channel.getNormalizeChannel}`)
+    await deltaFinalBlock("config_block", "modified_config", `${Channel.getNormalizeChannel}`)
     // // fifth, run the demo submit&sign
-    await submitConfigDemo("config_block", "modified_config", Channel)
+    await submitConfigDemo(Channel)
     await cleanFiles(Channel)
     
 }

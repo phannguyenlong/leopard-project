@@ -46,12 +46,15 @@ class OrdererOrganization extends Organization {
 }
 
 class Channel {
+    // need the 4th parameter
+    //constructor(channelName, orderer, peers, proposedPeers) {
     constructor(channelName, orderer, peers) {
         this.channelName = channelName
         this.orderer = orderer
         this.peers = [] // it is a array
         this.proposedPeers = [] // array of peers not yet in channel
         this.peers = peers
+        //this.proposedPeers = proposedPeers // 4th parameter
     }
 
     get getNormalizeChannel() {

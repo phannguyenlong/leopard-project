@@ -68,7 +68,13 @@ exports.buildChannelObject = function (jsonObj) {
     for (let i = 0; i < peers.length; i++) {
         peersObjc.push(new PeerOrganization(peers[i].orgName, peers[i].caAdmin, peers[i].caPassword, peers[i].peerAdmin, peers[i].peerPassword, peers[i].channelName, peers[i].caPort))
     }
-
+    // add array for the proposed peers
+    // let proposedPeersObj = []
+    // let proposedPeers = jsonObj.proposedPeers
+    // for (let i = 0; i < proposedPeers.length; i++) {
+    //    proposedPeersObj.push(new PeerOrganization(proposedPeers[i].orgName, proposedPeers[i].caAdmin, proposedPeers[i].caPassword, proposedPeers[i].peerAdmin, proposedPeers[i].peerPassword, proposedPeers[i].channelName, proposedPeers[i].caPort))
+    // }
+    // return new Channel(channelName, ordererObj, peersObjc, proposedPeersObj)
     return new Channel(channelName, ordererObj, peersObjc)
 }
 
@@ -94,4 +100,36 @@ exports.getLoginUser = function () {
  */
 exports.getChannelConfig = function () {
     return channelList
+}
+
+// we need to explicitly change the channel in channel list
+exports.addProposedPeer = async function (peer, channel) {
+    // channel is json object from channelList
+    let data = {
+        "orgName": `${peer.orgName}`,
+        "caAdmin": `${peer.caAdmin}`,
+        "caPassword": `${peer.caPassword}`,
+        "channelName": `${peer.channelName}`,
+        "caPort": `${peer.portNumber}`,
+        "caOperationPort": `1${peer.portNumber}`,
+        "peerAdmin": `${peer.peerAdmin}`,
+        "peerPassword": `${peer.peerPassword}`,
+        "peerPort": `${peer.portNumber + 1}`,
+        "peerOperationPort": `1${peer.portNumber + 1}`,
+        "chainCodePort": `${peer.portNumber + 2}`,
+        "couchdbPort": `${peer.portNumber + 3}`,
+        "peerMSPID": `${peer.getNormalizeOrg}.msp`
+    }
+    channel.proposedPeers.push(data)
+}
+
+// we need to explicitly change the channel in channel list
+exports.moveProposedPeer = async function (peer, channel) {
+    // channel is json object from channelList
+    for (var iteration = 0; iteration < channel.proposedPeers.length; iteration++) {
+        if (channel.proposedPeers[iteration].orgName == peer.orgName) {
+            channel.peers.push(channel.proposedPeers[iteration])
+            channel.proposedPeers.splice(iteration, 1)
+        }
+    }
 }
