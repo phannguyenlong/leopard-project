@@ -29,4 +29,23 @@ router.use('/network', function (req, res, next) {
     else res.redirect('/login.html?message=Root admin only')
 }, netwrokRoute)
 
+// testng route deme for streaming
+router.get("/test", async function (req, res) {
+    // 2 must have header
+    res.setHeader("Connection", 'keep-alive')
+    res.setHeader('Content-Type', 'text/event-stream');
+
+    // send data
+    for (let i = 0; i < 5; i++) {
+        console.log("run")
+        res.write(("hello")) // using res.write() to write stream
+        await sleep(1000) // wait 1s after each line after each stream
+    }
+    res.end()
+})
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 module.exports = router

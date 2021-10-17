@@ -1,0 +1,24 @@
+<h1>
+    hi
+</h1>
+<script>
+    async function test() {
+        // get the response
+        let res = await fetch("http://localhost:8080/api/test")
+        // use reader to read stream
+        const reader = res.body.getReader();
+
+        // make a loop to recieve data from stream
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break; // if stream is done, get out of the loop
+
+            // deccode data from stream
+            var uint8array = new TextEncoder().encode("¢")
+            var string = new TextDecoder().decode(value)
+            // print it out
+            console.log('Received', string);
+        }
+    }
+    test()
+</script>
