@@ -89,6 +89,24 @@ const shell = require('shelljs');
          
      
  })
+//  var log = ""
+//  router.get("/getLog", async function (req, res) {
+//     // 2 must have header
+//     res.setHeader("Connection", 'keep-alive')
+//     res.setHeader('Content-Type', 'text/event-stream');
+
+//     // send data
+//     for (let i = 0; i < 5; i++) {
+//         console.log("run")
+//         res.write(("hello")) // using res.write() to write stream
+//         await sleep(1000) // wait 1s after each line after each stream
+//     }
+//     res.end()
+// })
+
+// function sleep(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
 router.post("/createChannel", async function (req, res) {
     let dataInput = req.body.channel
     let schemaInput = req.body.schema
@@ -142,16 +160,22 @@ router.post("/createChannel", async function (req, res) {
         if(isError==false){
             let channel = new Channel(dataInput[0]["channel_name"],orderer,peers)
             // await main(orderer,peers,channel)
+            res.setHeader("Connection", 'keep-alive')
+            res.setHeader('Content-Type', 'text/event-stream');
             await createOrdererAndCA(orderer)
-
+            res.write(orderer.orgName+" sucessfully")
             // create peer
             for (let i = 0; i < peers.length; i++) {
                 await creatPeerAndCA(peers[i])
+                res.write(peers[i].orgName+" sucessfully")
+
             }
 
             // join channel
             await createChannel(channel)
+            res.write("Channel is ready")
             await deployCC(channel.channelName,"admin_dashboard/chaincode/admin-chaincode")
+            res.write("Deloy sucessfully chaincode ")
             console.log(peers, orderer, channel)
             
             // update channelList
@@ -166,7 +190,8 @@ router.post("/createChannel", async function (req, res) {
             }
             generateSchema(dataInput[0]["channel_name"], schema)
 
-            res.sendStatus(200)
+            // res.sendStatus(200)
+            res.end()
         }
     }
     else{

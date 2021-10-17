@@ -192,13 +192,26 @@ async function getData(){
 
     console.log(submitData)
     if(isValid==true){
-        const response = await fetch(`http://localhost:8080/api/network/createChannel`, {
+        var response = await fetch(`http://localhost:8080/api/network/createChannel`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(submitData)
         })
+        const reader = response.body.getReader();
+
+        // make a loop to recieve data from stream
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break; // if stream is done, get out of the loop
+
+            // deccode data from stream
+            var uint8array = new TextEncoder().encode("¢")
+            var string = new TextDecoder().decode(value)
+            // print it out
+            console.log('Received', string);
+        }
         if (response.status == 200) makeAlert("success", "Update Sucess")
         else response.text().then(text => {
             makeAlert("error", text)
