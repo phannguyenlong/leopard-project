@@ -163,17 +163,21 @@ router.post("/createChannel", async function (req, res) {
             res.setHeader("Connection", 'keep-alive')
             res.setHeader('Content-Type', 'text/event-stream');
             await createOrdererAndCA(orderer)
+            await sleep(100)
             res.write(orderer.orgName+" sucessfully")
             // create peer
             for (let i = 0; i < peers.length; i++) {
                 await creatPeerAndCA(peers[i])
+                await sleep(100)
                 res.write(peers[i].orgName+" sucessfully")
 
             }
 
             // join channel
             await createChannel(channel)
+            await sleep(100)
             res.write("Channel is ready")
+            await sleep(100)
             await deployCC(channel.channelName,"admin_dashboard/chaincode/admin-chaincode")
             res.write("Deloy sucessfully chaincode ")
             console.log(peers, orderer, channel)
@@ -198,6 +202,11 @@ router.post("/createChannel", async function (req, res) {
         res.sendStatus(500).send("Channel name has existed")
     }
 })
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 router.get('/downChannel',async function(req,res){
     var channel = req.query.channel_name
     let file = JSON.parse(fs.readFileSync(__dirname+"/../../server-config/server-config.json"))

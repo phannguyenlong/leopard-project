@@ -207,14 +207,13 @@ async function getData(){
             if (done) break; // if stream is done, get out of the loop
 
             // deccode data from stream
-            var uint8array = new TextEncoder().encode("¢")
             var string = new TextDecoder().decode(value)
             // print it out
             console.log('Received', string);
         }
         if (response.status == 200) makeAlert("success", "Update Sucess")
-        else response.text().then(text => {
-            makeAlert("error", text)
-        })
+        else {
+            makeAlert("error", "Error when create channel")
+        }
     }    
 }
