@@ -281,7 +281,12 @@ async function submitConfig(PeerOrganization, Channel) {
     shell.env["CORE_PEER_ADDRESS"] = `localhost: ${PeerOrganization.peerPort}`
     // sign and attemp to update
     // if not enough endorsement for the policy, update is reject
-    shell.exec(`peer channel update -f ${NETWORK_PATH}/channel-artifacts/${PeerOrganization.getNormalizeChannel}/conifg_update_in_envelope.pb -o localhost:${Channel.orderer.ordererPort} -c ${Channel.getNormalizeChannel} --tls --cafile "${NETWORK_PATH}/organizations/${Channel.getNormalizeChannel}/ordererOrganizations/${Channel.orderer.getNormalizeOrg}/msp/tlscacerts/tls-localhost-${Channel.orderer.caPort}-ca-orderer-${Channel.orderer.getNormalizeOrg.replace(".", "-")}.pem"`)
+    let updateSuccess = false
+    shell.exec(`peer channel signconfigtx -f ${NETWORK_PATH}/channel-artifacts/${PeerOrganization.getNormalizeChannel}/conifg_update_in_envelope.pb`)
+    let {code, stdout, stderr} = shell.exec(`peer channel update -f ${NETWORK_PATH}/channel-artifacts/${PeerOrganization.getNormalizeChannel}/conifg_update_in_envelope.pb -o localhost:${Channel.orderer.ordererPort} -c ${Channel.getNormalizeChannel} --tls --cafile "${NETWORK_PATH}/organizations/${Channel.getNormalizeChannel}/ordererOrganizations/${Channel.orderer.getNormalizeOrg}/msp/tlscacerts/tls-localhost-${Channel.orderer.caPort}-ca-orderer-${Channel.orderer.getNormalizeOrg.replace(".", "-")}.pem"`)
+    if (stderr.includes("Successfully submitted channel update"))
+        updateSuccess = true // mean update sucess
+    return updateSuccess
 }
 
 async function deltaFinalBlock(originalBlock, modifiedBlock, channelName) {

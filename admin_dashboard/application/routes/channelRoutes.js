@@ -80,7 +80,11 @@ router.post("/signConfig", async function (req, res) {
     if (user && user.channelName) {
         let channel = buildChannelObject(getChannelConfig()[user.channelName])
         let peer = await channel.getPeer(user.organization) // get a peer member
-        await submitConfig(peer, channel) // submit and attemp update (if satisfied endorsement polocy, new config is accepted)
+        let isUpdated = await submitConfig(peer, channel) // submit and attemp update (if satisfied endorsement polocy, new config is accepted)
+        console.log(isUpdated)
+        if (isUpdated) { // means "Successfully submitted channel update"
+            // do something here 
+        }
         res.sendStatus(200)
     } else {
         res.sendStatus(403) // unauthorzied
