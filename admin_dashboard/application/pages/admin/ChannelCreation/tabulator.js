@@ -222,7 +222,7 @@ async function getData(){
           body: JSON.stringify(submitData)
         })
         const reader = response.body.getReader();
-
+        var error = false
         // make a loop to recieve data from stream
         while (true) {
             const { value, done } = await reader.read();
@@ -232,14 +232,26 @@ async function getData(){
             var stringUnderscore = new TextDecoder().decode(value).replace(" ","_");
             log[stringUnderscore] = true
             console.log(stringUnderscore)
-
+            if (response.status == 500) {
+                console.log("eror herer")
+                makeAlert("error", stringUnderscore)
+                error=true
+                break
+            }
             document.getElementById(`log_${stringUnderscore}`).innerHTML=`<div><p><b>${stringUnderscore}</b>: <img src="./greenTick.png" alt="correct" width="32" height="32"></p></div>`
             // print it out
             console.log('Received', stringUnderscore);
+            
         }
+        if(error==true){
+            Objlog.innerHTML=""
+        }
+
         if (response.status == 200) makeAlert("success", "Update Sucess")
         else {
-            makeAlert("error", "Error when create channel")
+            response.text().then(text => {
+                makeAlert("error", text)
+            })
         }
     }    
 }

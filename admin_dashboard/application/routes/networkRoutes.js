@@ -116,22 +116,28 @@ router.post("/createChannel", async function (req, res) {
 
     var oldPorts = []
     var oldOrgNames = []
+    var oldCaNames = []
     for(let i=0;i<oldChannelNames.length;i++){
         var oldChannel = data[oldChannelNames[i]]
         var orderer = oldChannel["orderer"]
-        oldPorts.push(orderer["ordererPort"])
+        oldPorts.push(orderer["caPort"])
         oldOrgNames.push(orderer["orgName"])
+        oldCaNames.push(orderer["caAdmin"])
 
         var peers = oldChannel["peers"]
         for(let j=0;j<peers.length;j++){
-            oldPorts.push(peers[j]["peerPort"])
+            oldPorts.push(peers[j]["caPort"])
             oldOrgNames.push(peers[j]["orgName"])
+            oldCaNames.push(peers[j]["caAdmin"])
+
         }
 
     }
     console.log(oldPorts)
     console.log(oldOrgNames)
     console.log(oldChannelNames)
+    console.log(oldCaNames)
+    
     if(oldChannelNames.indexOf(dataInput[0]["channel_name"])==-1){
         var peers = []
         var orderer;
@@ -139,12 +145,18 @@ router.post("/createChannel", async function (req, res) {
         var isError=false
         for(let i=0;i<dataInput.length;i++){
             if(oldOrgNames.indexOf(dataInput[i]["Org_name"]) !=-1){
-                res.status(500).send(` Name: ${dataInput[i]["Org_name"]} has existed `)
+                return res.status(500).send(` Name: ${dataInput[i]["Org_name"]} has existed `)
                 isError=true
                 break
             }
             if(oldPorts.indexOf(parseInt(dataInput[i]["port_number"])) !=-1){
-                res.status(500).send(` Port: ${dataInput[i]["port_number"]} has existed `)
+                return res.status(500).send(` Port: ${dataInput[i]["port_number"]} has existed `)
+                isError=true
+                break
+            }
+            if(oldCaNames.indexOf(dataInput[i]["CA_username"]) !=-1){
+                console.log("Something wrong here")
+                return res.status(500).send(` CA username: ${dataInput[i]["CA_username"]} has existed `)
                 isError=true
                 break
             }
@@ -199,7 +211,7 @@ router.post("/createChannel", async function (req, res) {
         }
     }
     else{
-        res.sendStatus(500).send("Channel name has existed")
+        return res.sendStatus(500).send("Channel name has existed")
     }
 })
 

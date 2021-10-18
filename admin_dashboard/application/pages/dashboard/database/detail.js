@@ -74,17 +74,15 @@
         
         var data = await dataContainer.json();
         console.log(data);
-        console.log(data.length);
-        console.log("Timestamp: " + data[0].Timestamp.seconds);
+        console.log("Timestamp: " + data[0].Timestamp);
         
 	//let timeElements = [];
 	var timeline = document.getElementById("timelineContent");
         
         for(var i = 0; i < data.length; i++)
         {
-		var tmp = data[i].Timestamp.seconds;
+		var tmp = data[i].Timestamp;
 		var time = new Date(parseInt(tmp) * 1000);
-		console.log(typeof time);
 		console.log(time);
 
 		var date = time.getDate();
@@ -112,25 +110,44 @@
 		  </li>`;
 		
 		timeElements[i] = p;*/
-		var li = document.createElement("li");
-		var div = document.createElement('div');
-		div.className = "timeContainer";
+
 		
-		var div2 = document.createElement('div');
-		div2.className = "time";
-		var el = document.createTextNode(timeFormat);
-		div2.appendChild(el);
+		for(var j = 0; j < data[i].changes.length; j++)
+		{
+   		   var li = document.createElement("li");
+		   var div = document.createElement('div');
+		   div.className = "timeContainer";
 		
-		var div3 = document.createElement('div');
-		div3.className = "content";
-		var el2 = document.createTextNode("Product was updated");
-		div3.appendChild(el2);
+		   var div2 = document.createElement('div');
+		   div2.className = "time";
+		   var el = document.createTextNode(timeFormat);
+		   div2.appendChild(el);
 		
-		div.appendChild(div2);
-		div.appendChild(div3);
+		   var div3 = document.createElement('div');
+		   div3.className = "content";
 		
-		li.appendChild(div);
-		timeline.appendChild(li);
+		   console.log("Change status: " + data[i].changes[j].status);
+		   if(data[i].changes[j].status == "Edited")
+		   {
+		      var el2 = document.createTextNode("Attribute " + data[i].changes[j].location + " has changed " + data[i].changes[j].old + " to " + data[i].changes[j].new);
+		   }
+		   else if(data[i].changes[j].status == "Changes")
+		   {
+		      continue;
+		   }
+		   else if(data[i].changes[j].status == "Created")
+		   {
+		      var el2 = document.createTextNode("Product is created");
+		   }
+		   
+		   div3.appendChild(el2);
+		
+		   div.appendChild(div2);
+		   div.appendChild(div3);
+		
+		   li.appendChild(div);
+		   timeline.appendChild(li);
+		}
         }
         
         let div4 = document.createElement('div');
