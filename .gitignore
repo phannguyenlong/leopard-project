@@ -2,3 +2,4 @@ bin
 draft
 test.js
 *.tar.gz
+.vs
