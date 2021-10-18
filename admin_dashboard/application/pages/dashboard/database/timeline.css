@@ -1,0 +1,152 @@
+body
+{
+    margin: 0;
+    padding: 0;
+}
+
+.timelineTitle
+{
+    padding: 10px;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.timeline
+{
+    background-color: rgb(211, 211, 211);
+    position: relative;
+    width: 500px;
+    height:fit-content;
+    font-size: 1.2em;
+    margin: 10px;
+}
+
+.timeline::before
+{
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    background-color: black;
+}
+
+.timeline ul
+{
+    padding: 0;
+    margin: 0;
+}
+
+.timeline ul li
+{
+    list-style-type: none;
+    line-height: normal;
+    position: relative;
+    width: 50%;
+    padding: 20px 40px;
+    box-sizing: border-box;
+}
+
+.timeline ul li:nth-child(odd)
+{
+    float: left;
+    text-align: right;
+    clear: both;
+}
+
+.timeline ul li:nth-child(even)
+{
+    float: right;
+    text-align: left;
+    clear: both;
+}
+
+.content
+{
+    padding-bottom: 20px;
+}
+
+.timeline ul li .timeContainer:nth-child(even)::before
+{
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background-color: black;
+}
+
+.timeline ul li:nth-child(odd)::before
+{
+    content: '';
+    position: absolute;
+    top: 24px;
+    right: -6px;
+    width: 10px;
+    height: 10px;
+    background-color: gold;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(255, 217, 0, 0.247);
+}
+
+.timeline ul li:nth-child(even)::before
+{
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: -4px;
+    width: 10px;
+    height: 10px;
+    background-color: gold;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(255, 217, 0, 0.247);
+}
+
+.timeline ul li h3
+{
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+    color: rgb(211, 93, 113);
+}
+
+.timeline ul li p
+{
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.timeline ul li .time p
+{
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+
+.timeline ul li:nth-child(odd) .time
+{
+    position: absolute;
+    right: -165px;
+    top: 12px;
+    margin: 0;
+    padding: 8px 16px;
+    background-color: rgb(0, 143, 19);
+    color: white;
+    border-radius: 18px;
+    box-shadow: 0 0 0 3px rgba(211, 93, 113, 0.288);
+}
+
+.timeline ul li:nth-child(even) .time
+{
+    position: absolute;
+    left: -165px;
+    top: 12px;
+    margin: 0;
+    padding: 8px 16px;
+    background-color: rgb(0, 143, 19);
+    color: white;
+    border-radius: 18px;
+    box-shadow: 0 0 0 3px rgba(211, 93, 113, 0.288);
+}
