@@ -5,7 +5,7 @@
 
 const express = require("express")
 const router = express.Router()
-const { getLoginUser, getChannelConfig, buildChannelObject, buildPeerObject, addProposedPeer, moveProposedPeer } = require("../util/WebUtil")
+const { getLoginUser, getChannelConfig, buildChannelObject, buildPeerObject, loadChannelConfig } = require("../util/WebUtil")
 const { creatPeerAndCA } = require("../channel-utils/channelComponent")
 const { createConfigtx, fetchConfig, decodePBtoJSON, updateConfig, encodeJSONtoPB, deltaFinalBlock, submitConfig, PeerJoinChannel, cleanFiles, removeConfig } = require("../channel-utils/channelConfiguration")
 
@@ -46,11 +46,18 @@ router.post("/submitProposalAddPeer", async function (req, res) {
     if (user && user.channelName) {
         let data = req.body
         let channel = buildChannelObject(getChannelConfig()[user.channelName])
+        channel.setProposedPeers = getChannelConfig()[user.channelName].proposedPeers
+        console.log(channel.proposedPeers)
         let orderer = channel.orderer
         let newPeer = buildPeerObject(data, user.channelName)
         // logic: check dupe name
         if (await channel.checkNoDupeName(newPeer)) {
-            await addProposedPeer(newPeer, getChannelConfig()[user.channelName])
+            await channel.addProposedPeers(newPeer)
+            console.log(channel.proposedPeers)
+            // update channelList
+            await channel.exportConfig
+            await loadChannelConfig
+            console.log(getChannelConfig()[user.channelName])
         } else {
             res.sendStatus(404)
             return// idk how to stop api here?
@@ -75,34 +82,39 @@ router.post("/submitProposalAddPeer", async function (req, res) {
 
 // does not work as we thought it supposed to be
 router.post("/signConfig", async function (req, res) {
-    // no data needed
+    // need flag: "Add" or "Remove"
+    // need orgName of the proposed peer
     const user = getLoginUser()[req.cookies.session]
+    let data = req.body
+    const flag = data.flag
     if (user && user.channelName) {
         let channel = buildChannelObject(getChannelConfig()[user.channelName])
+        channel.setProposedPeers = getChannelConfig()[user.channelName].proposedPeers
+        console.log(channel.proposedPeers)
         let peer = await channel.getPeer(user.organization) // get a peer member
+        let proposedpeer = channel.getProposedPeer[data.orgName] // get the proposed peer
         let isUpdated = await submitConfig(peer, channel) // submit and attemp update (if satisfied endorsement polocy, new config is accepted)
         console.log(isUpdated)
-        if (isUpdated) { // means "Successfully submitted channel update"
-            // do something here 
+        if (isUpdated && flag == "Add") { // means "Successfully submitted channel update" && the operation is adding peer
+            await PeerJoinChannel(proposedpeer, orderer) // join peer to channel
+            await channel.moveProposedPeer(proposedpeer)
+            console.log(channel.proposedPeers)
+            console.log(channel.peers)
+            await deployCC(user.channelName, "admin_dashboard/chaincode/admin-chaincode") // add chaincode
+            // update channelList
+            await channel.exportConfig
+            await loadChannelConfig
+            await cleanFiles(channel)
+        } else if (isUpdated && flag == "Remove") {
+            await channel.removeProposedPeers(proposedpeer)
+            console.log(channel.proposedPeers)
+            console.log(channel.peers)
+            // update channelList
+            await channel.exportConfig
+            await loadChannelConfig
+            await cleanFiles(channel)
         }
-        res.sendStatus(200)
-    } else {
-        res.sendStatus(403) // unauthorzied
-    }
-})
-
-router.post("/joinPeer", async function (req, res) {
-    // no data needed
-    const user = getLoginUser()[req.cookies.session]
-    if (user && user.channelName) {
-        let channel = buildChannelObject(getChannelConfig()[user.channelName])
-        let orderer = channel.orderer
-        let peer = channel.getProposedPeer[user.organization] // get a peer member (identified by peer name)
-        await PeerJoinChannel(peer, orderer) // join peer to channel
-        await moveProposedPeer(peer, getChannelConfig()[user.channelName])
-        // add chaincode
-        await deployCC(user.channelName, "admin_dashboard/chaincode/admin-chaincode")
-        await cleanFiles(channel)
+        console.log(getChannelConfig()[user.channelName])
         res.sendStatus(200)
     } else {
         res.sendStatus(403) // unauthorzied

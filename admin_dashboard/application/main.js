@@ -23,7 +23,7 @@ async function main() {
     let orderer = new OrdererOrganization("Company C", 'adminC', 'pass', 'peerC', 'pass', 'channel1', 8054)
     let peers = [
         new PeerOrganization("Company A", 'adminA', 'pass', 'peerA', 'pass', 'channel1', 6054),
-        new PeerOrganization("Company B", 'adminB', 'pass', 'peerb', 'passs', 'channel1', 7054)
+        new PeerOrganization("Company B", 'adminB', 'pass', 'peerb', 'pass', 'channel1', 7054)
     ]
     let channel1 = new Channel("channel1", orderer, peers)
 

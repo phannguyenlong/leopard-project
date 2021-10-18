@@ -56,7 +56,9 @@ class Channel {
         this.peers = peers
         //this.proposedPeers = proposedPeers // 4th parameter
     }
-
+    set setProposedPeers(peers) {
+        this.proposedPeers = this.proposedPeers.concat(peers)
+    }
     get getNormalizeChannel() {
         return this.channelName.replace(" ", ".").toLowerCase()
     }
@@ -78,6 +80,18 @@ class Channel {
 
     async addProposedPeers(peer) {
         this.proposedPeers.push(peer)
+    }
+    async removeProposedPeers(peer) {
+        for (var iteration = 0; iteration < this.proposedPeers.length; iteration++) {
+            if (this.proposedPeers[iteration].orgName == peer.orgName) {
+                this.proposedPeers.splice(iteration, 1)
+            }
+        }
+        for (var iteration = 0; iteration < this.peers.length; iteration++) {
+            if (this.peers[iteration].orgName == peer.orgName) {
+                this.peers.splice(iteration, 1)
+            }
+        }
     }
     async moveProposedPeer(peer) {
         for (var iteration = 0; iteration < this.proposedPeers.length; iteration++) {
