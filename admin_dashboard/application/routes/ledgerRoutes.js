@@ -4,6 +4,7 @@
  */
 const express = require("express")
 const router = express.Router()
+const diff = require('deep-diff')
 
 const { Gateway } = require('fabric-network');
 const { validateSchema, generateFakeObject, getLoginUser } = require('../util/WebUtil.js');
@@ -127,11 +128,32 @@ router.get("/getProductHistory", async function (req, res) {
 
         console.log("GET Product history")
         let data = await contract.evaluateTransaction('GetProductHistory', key) // remember to convert to stirng pass
-        res.status(200).json(JSON.parse(data.toString()))
+        data = JSON.parse(data.toString())
+        let returnData = []
+        
+        let status = {N: "Add", E: "Edited", D: "Deleted", A: "Changes"}
+        returnData[data.length - 1] = { TxId: data[0].TxId, Timestamp: data[0].Timestamp.seconds, changes: [{ status: "Created", location: '', old: '', new: '' }]}
+        for (let i = 1; i < data.length; i++) {
+            returnData[i-1] = {}
+            let differ = diff.diff(data[i - 1].Value.procedures, data[i].Value.procedures)
+            console.log(differ)
+            returnData[i-1].TxId = data[i].TxId
+            returnData[i-1].Timestamp = data[i].Timestamp.seconds
+            returnData[i-1].changes = []
+            for (let x = 0; x < differ.length; x++) {
+                returnData[i-1].changes.push({
+                    status: status[differ[x].kind],
+                    location: differ[x].path ? differ[x].path.join("/") : '.',
+                    old: differ[x].rhs, new: differ[x].lhs
+                })
+            }
+        }
+
+        res.status(200).json(returnData)
         
     } catch (err) {
         console.error("error: " + err)
-        res.send(500)
+        res.sendStatus(500)
     } finally {
         gateway.disconnect()
     }
