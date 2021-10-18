@@ -78,6 +78,7 @@ async function fetchConfig(PeerOrganization, OrdererOrganization) {
     // 2 organization objects 
     // PeerOrganization = peer object that is a member of the channel
     // OdererOrganization = orderer of the channel
+    shell.cp('-f', `${UTIL_PATH}/../../../config/core.yaml`, `${NETWORK_PATH}/channel-config/${PeerOrganization.channelName}`)
     // Impersonating a member of the channel
     shell.env["PATH"] = NETWORK_PATH + "../bin/:" + shell.env["PATH"] // set path to bin
     shell.env["FABRIC_CFG_PATH"] = NETWORK_PATH + `/channel-config/${PeerOrganization.getNormalizeChannel}` // path to configtx of the channel

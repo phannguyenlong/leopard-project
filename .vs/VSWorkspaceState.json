@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\admin_dashboard",
+    "\\admin_dashboard\\application",
+    "\\admin_dashboard\\application\\channel-utils",
+    "\\admin_dashboard\\application\\routes",
+    "\\admin_dashboard\\application\\util",
+    "\\admin_dashboard\\server-config"
+  ],
+  "SelectedNode": "\\admin_dashboard\\application\\main.js",
+  "PreviewInSolutionExplorer": false
+}

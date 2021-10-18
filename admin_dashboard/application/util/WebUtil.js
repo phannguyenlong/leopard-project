@@ -68,14 +68,13 @@ exports.buildChannelObject = function (jsonObj) {
     for (let i = 0; i < peers.length; i++) {
         peersObjc.push(new PeerOrganization(peers[i].orgName, peers[i].caAdmin, peers[i].caPassword, peers[i].peerAdmin, peers[i].peerPassword, peers[i].channelName, peers[i].caPort))
     }
+    let channel = new Channel(channelName, ordererObj, peersObjc)
     // add array for the proposed peers
-    // let proposedPeersObj = []
-    // let proposedPeers = jsonObj.proposedPeers
-    // for (let i = 0; i < proposedPeers.length; i++) {
-    //    proposedPeersObj.push(new PeerOrganization(proposedPeers[i].orgName, proposedPeers[i].caAdmin, proposedPeers[i].caPassword, proposedPeers[i].peerAdmin, proposedPeers[i].peerPassword, proposedPeers[i].channelName, proposedPeers[i].caPort))
-    // }
-    // return new Channel(channelName, ordererObj, peersObjc, proposedPeersObj)
-    return new Channel(channelName, ordererObj, peersObjc)
+    let proposedPeers = jsonObj.proposedPeers
+    for (let i = 0; i < proposedPeers.length; i++) {
+        channel.proposedPeers.push(new PeerOrganization(proposedPeers[i].orgName, proposedPeers[i].caAdmin, proposedPeers[i].caPassword, proposedPeers[i].peerAdmin, proposedPeers[i].peerPassword, proposedPeers[i].channelName, proposedPeers[i].caPort))
+    }
+    return channel
 }
 
 exports.buildPeerObject = function (jsonObj, channel) {

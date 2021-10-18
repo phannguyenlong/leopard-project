@@ -63,7 +63,7 @@ class Channel {
         return this.channelName.replace(" ", ".").toLowerCase()
     }
 
-    set addPeer(peer) {
+    addPeer(peer) {
         this.peers.push(peer)
     }
     // use to save channel config to file
@@ -123,7 +123,7 @@ class Channel {
         }
     }
     async getProposedPeer(orgName) {
-        for (let iteration = 0; iteration < this.peers.length; iteration++) {
+        for (let iteration = 0; iteration < this.proposedPeers.length; iteration++) {
             if (this.proposedPeers[iteration].orgName == orgName) {
                 return this.proposedPeers[iteration]
             }
