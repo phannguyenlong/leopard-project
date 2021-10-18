@@ -238,15 +238,12 @@ async function getData(){
                 error=true
                 break
             }
-            
-            
-        }
-        if(error == false){
             document.getElementById(`log_${stringUnderscore}`).innerHTML=`<div><p><b>${stringUnderscore}</b>: <img src="./greenTick.png" alt="correct" width="32" height="32"></p></div>`
             // print it out
             console.log('Received', stringUnderscore);
+            
         }
-        else{
+        if(error==true){
             Objlog.innerHTML=""
         }
 

@@ -120,13 +120,13 @@ router.post("/createChannel", async function (req, res) {
     for(let i=0;i<oldChannelNames.length;i++){
         var oldChannel = data[oldChannelNames[i]]
         var orderer = oldChannel["orderer"]
-        oldPorts.push(orderer["ordererPort"])
+        oldPorts.push(orderer["caPort"])
         oldOrgNames.push(orderer["orgName"])
         oldCaNames.push(orderer["caAdmin"])
 
         var peers = oldChannel["peers"]
         for(let j=0;j<peers.length;j++){
-            oldPorts.push(peers[j]["peerPort"])
+            oldPorts.push(peers[j]["caPort"])
             oldOrgNames.push(peers[j]["orgName"])
             oldCaNames.push(peers[j]["caAdmin"])
 

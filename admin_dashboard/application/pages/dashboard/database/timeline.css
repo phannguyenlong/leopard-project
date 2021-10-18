@@ -13,9 +13,8 @@ body
 
 .timeline
 {
-    background-color: rgb(211, 211, 211);
     position: relative;
-    width: 500px;
+    width: 1000px;
     height:fit-content;
     font-size: 1.2em;
     margin: 10px;
