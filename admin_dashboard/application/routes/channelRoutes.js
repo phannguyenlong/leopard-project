@@ -151,16 +151,14 @@ router.get("/getProposedPeer", (req, res) => {
         let data = { channelName: user.channelName, addPeer: {}, removePeer: {} }
         console.log(channel.proposedPeers)
         for (let i = 0; i < channel.proposedPeers.length; i++) {
-            if (channel.peers.includes(channel.proposedPeers[i])) {
-                console.log('Request to be added:')
-                let peerAdd = channel.proposedPeers[i]
-                data.addPeer[peerAdd.getNormalizeOrg] = {
-                    org: `${peerAdd.getNormalizeOrg}`,
-                    node: `peer.${peerAdd.getNormalizeOrg}:${peerAdd.peerPort}`,
-                    caNode: `ca.${peerAdd.getNormalizeOrg}:${peerAdd.caPort}`,
-                    dbNode: `couchdb.${peerAdd.getNormalizeOrg}:${peerAdd.couchdbPort}`
-                }
-            } else {
+            let flag = false
+            for (let j = 0; j < channel.peers.length; j++){              
+                if (channel.proposedPeers[i].orgName == channel.peers[j].orgName) {
+                    flag = true
+                    break
+                }    
+            }
+            if(flag) {
                 console.log('Request to be removed:')
                 let peerRemove = channel.proposedPeers[i]
                 data.removePeer[peerRemove.getNormalizeOrg] = {
@@ -169,8 +167,17 @@ router.get("/getProposedPeer", (req, res) => {
                     caNode: `ca.${peerRemove.getNormalizeOrg}:${peerRemove.caPort}`,
                     dbNode: `couchdb.${peerRemove.getNormalizeOrg}:${peerRemove.couchdbPort}`
                 }
+            } else {
+                console.log('Request to be added:')
+                let peerAdd = channel.proposedPeers[i]
+                data.addPeer[peerAdd.getNormalizeOrg] = {
+                    org: `${peerAdd.getNormalizeOrg}`,
+                    node: `peer.${peerAdd.getNormalizeOrg}:${peerAdd.peerPort}`,
+                    caNode: `ca.${peerAdd.getNormalizeOrg}:${peerAdd.caPort}`,
+                    dbNode: `couchdb.${peerAdd.getNormalizeOrg}:${peerAdd.couchdbPort}`
+                }        
             }
-        }
+        }                               
         console.log(data)
         res.status(200).json(data)
     } else {
