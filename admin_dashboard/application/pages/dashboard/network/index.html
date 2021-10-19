@@ -3,6 +3,7 @@
   <link rel="stylesheet" href="../../css/dashboard.css" />
   <link rel="stylesheet" href="./index.css" />
   <script src="peerStatus.js" async></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
   <div id="header">
@@ -36,6 +37,10 @@
           <div class="headerButtContainer">
               <strong class="sectionHeader">Channel Information</strong>
               <div class="channelbtn">
+                <button onclick="getOutOfChannel()" type="button" class="positiveButton" style="width: 140px; background-color: ff4b46;">
+                  <img src="../../asset/images/logout.svg" width="20px" />
+                  Get out of channel
+                </button>
                 <button type="button" class="positiveButton">
                   <img src="../../asset/images/add.svg" width="20px" />
                   <a href="./new.html">Add New</a>
@@ -71,17 +76,7 @@
                   </tr>
               </thead>
 
-              <tbody class="tableContent" id="OrgStatus">
-                  <tr>
-                      <td>Company 1</td>
-                      <td>Add</td>
-                      <td>
-                        <div>
-                          <button type="button" class="positiveButton">Sign Proposal</button></td>
-                          <!-- <button type="button" class="negativeButton">Denied</button></td> -->
-                        </div>
-                  </tr>
-              </tbody>
+              <tbody class="tableContent" id="OrgStatus"></tbody>
           </table>
       </section>
       <!------------------------------------------------------------------------------------------------------------------------------>
@@ -95,9 +90,10 @@
       }
     })
 
-    // init part
+    // =============================init part=============================
     fetch("http://localhost:8080/api/channel/getChannelInfo").then(res => res.json())
     .then(data => {
+      console.log(data)
       // let table = document.getElementById("peerTable")
       document.getElementById("headerText").innerHTML = data.channelName
       for (node in data) {
@@ -108,11 +104,74 @@
             <td>${data[node].node}</td>
             <td>${data[node].caNode}</td>
             <td>${data[node].dbNode}</td>
-            <td><button type="button" class="utilButton">Remove</button></td>
           </tr>
         `
       document.getElementById("peerTable").insertAdjacentHTML('beforeend', dataHTML)
       }
+
+      // get proposed peer
+      fetch("http://localhost:8080/api/channel/getProposedPeer").then(res => res.json())
+      .then(data => {
+        //add
+        for (let peer in data.addPeer) {
+          let dataHTML = `
+            <tr>
+              <td>${data.addPeer[peer].org}</td>
+              <td>Add</td>
+              <td>
+              <button onclick="signProposal('${data.addPeer[peer].org}', 'Add')" type="button" class="positiveButton">Sign Proposal</button></td>
+            </tr>
+          `
+          document.getElementById("OrgStatus").insertAdjacentHTML('beforeend', dataHTML)
+        }
+        // remove
+        for (let peer in data.removePeer) {
+          let dataHTML = `
+            <tr>
+              <td>${data.removePeer[peer].org}</td>
+              <td>Remove</td>
+              <td>
+              <button onclick="signProposal('${data.removePeer[peer].org}', 'Remove')" type="button" class="positiveButton">Sign Proposal</button></td>
+            </tr>
+          `
+          document.getElementById("OrgStatus").insertAdjacentHTML('beforeend', dataHTML)
+        }
+      })
     }) 
+
+    // =============================Function part=============================
+    // for makeAlert
+    function makeAlert(type, title) {
+      Swal.fire({
+        title: title,
+        icon: type,
+        confirmButtonColor: '#3085d6',
+      })
+    }
+    async function signProposal(orgName, method) {
+      let response = await fetch("http://localhost:8080/api/channel/signConfig", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({flag: method, orgName: orgName})
+      })
+      if (response.status == 200) {
+          makeAlert("success", "Sign proposal success")
+      } else if (response.status == 403) {
+          makeAlert("error", "Unauthorized")
+      } else makeAlert("error", "Update error: " + response.statusText)
+    }
+
+    async function getOutOfChannel() {
+      let response = await fetch("http://localhost:8080/api/channel/submitProposalRemovePeer", {
+        method: "DELETE",
+      })
+      if (response.status == 200) {
+          makeAlert("success", "Sign proposal success")
+      } else if (response.status == 403) {
+          makeAlert("error", "Unauthorized")
+      } else makeAlert("error", "Update error: " + response.statusText)
+    }
   </script>
 </body>

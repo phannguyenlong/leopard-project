@@ -124,7 +124,8 @@ class Channel {
     }
     async getProposedPeer(orgName) {
         for (let iteration = 0; iteration < this.proposedPeers.length; iteration++) {
-            if (this.proposedPeers[iteration].orgName == orgName) {
+            let peerOrg = this.proposedPeers[iteration].orgName.toLowerCase().replace(" ", ".") // normalize peer name for compare
+            if (peerOrg == orgName) {
                 return this.proposedPeers[iteration]
             }
         }

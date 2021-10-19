@@ -1,7 +1,6 @@
 const peerCountUrl = 'http://localhost:8080/api/network/show_detail?channel=mychannel'; //this show what peers are in a organization in the channel
 const peerDetails = 'http://localhost:8080/api/network/getOrgStatus?channel=Channel'; //this show details about the peers that are in the channel
 
-console.log("Hello");
 orgInChannel(peerCountUrl);
 
 peersInChannel(peerDetails);

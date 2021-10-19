@@ -8,6 +8,7 @@ const router = express.Router()
 const { getLoginUser, getChannelConfig, buildChannelObject, buildPeerObject, loadChannelConfig } = require("../util/WebUtil")
 const { creatPeerAndCA } = require("../channel-utils/channelComponent")
 const { deployCC } = require("../channel-utils/deployChaincode")
+const { downPeer } = require("../channel-utils/channelInteract")
 const { createConfigtx, fetchConfig, decodePBtoJSON, updateConfig, encodeJSONtoPB, deltaFinalBlock, submitConfig, PeerJoinChannel, cleanFiles, removeConfig } = require("../channel-utils/channelConfiguration")
 
 router.get("/getChannelInfo", (req, res) => {
@@ -103,13 +104,14 @@ router.post("/signConfig", async function (req, res) {
             // update channelList
             await channel.exportConfig()
             await loadChannelConfig()
-            //await cleanFiles(channel)
+            await cleanFiles(channel)
         } else if (isUpdated && flag == 'Remove') {
             await channel.removeProposedPeers(proposedpeer)
             // update channelList
             await channel.exportConfig()
             await loadChannelConfig()
-            //await cleanFiles(channel)
+            await cleanFiles(channel)
+            await downPeer(proposedpeer)
         }
         console.log(getChannelConfig()[user.channelName])
         res.sendStatus(200)
