@@ -189,13 +189,6 @@ router.post("/createChannel", async function (req, res) {
             await createChannel(channel)
             await sleep(100)
             res.write("Channel")
-            await sleep(100)
-            await deployCC(channel.channelName,"admin_dashboard/chaincode/admin-chaincode")
-            res.write("Deploy")
-            console.log(peers, orderer, channel)
-            
-            // update channelList
-            loadChannelConfig() // load channel config file
 
             // creat schema config
             let schema = { titles: [], required: [] }
@@ -204,7 +197,15 @@ router.post("/createChannel", async function (req, res) {
                 schema.titles.push({ name: field.title, type: field.type })
                 if (field.isRequired) schema.required.push(field.title)
             }
-            generateSchema(dataInput[0]["channel_name"], schema)
+            await generateSchema(dataInput[0]["channel_name"], schema)
+            // deploy CC
+            await sleep(100)
+            await deployCC(channel.channelName,"admin_dashboard/chaincode/admin-chaincode")
+            res.write("Deploy")
+            console.log(peers, orderer, channel)
+            
+            // update channelList
+            loadChannelConfig() // load channel config file
 
             // res.sendStatus(200)
             res.end()

@@ -8,15 +8,23 @@
  * GetProductHistory(ctx, productID) # return all the transaction of that product
  */
 
-'use strict';
-
 const { Contract, Info } = require('fabric-contract-api');
+const Ajv = require("ajv");
+const fs = require('fs');
 
 class Chaincode extends Contract {
 
 	// CreateAsset - create a new asset, store into chaincode state
 	async createProduct(ctx, product) {
 		product = JSON.parse(product)
+
+		const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
+		let file = fs.readFileSync( __dirname + `/schema.json`)
+		const validate = ajv.compile(JSON.parse(file))
+		if (!validate(product)) {
+			throw new Error("Wrong data type")
+		}
+
 		const exists = await this.productExists(ctx, product.productID);
 		if (JSON.parse(exists.toString())) {
 			throw new Error(`The product ${product.productID} already exists`);
@@ -63,6 +71,13 @@ class Chaincode extends Contract {
 		let exists = await this.productExists(ctx, product.productID);
 		if (!exists) {
 			throw new Error(`Product ${product.productID} does not exist`);
+		}
+
+		const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
+		let file = fs.readFileSync( __dirname + `/schema.json`)
+		const validate = ajv.compile(JSON.parse(file))
+		if (!validate(product)) {
+			throw new Error("Wrong data type")
 		}
 
 		try {

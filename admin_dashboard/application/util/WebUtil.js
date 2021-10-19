@@ -43,6 +43,7 @@ exports.generateSchema = async function generateSchema(channleName, schemaObject
     }
     schema.properties.procedures.required =  schemaObject.required
     fs.writeFileSync(__dirname + `/../../server-config/${channleName}_schema.json`, JSON.stringify(schema, null, 4))
+    fs.writeFileSync(__dirname + `/../../chaincode/admin-chaincode/lib/schema.json`, JSON.stringify(schema, null, 4))
 }
 
 exports.generateFakeObject = function (channel) {
