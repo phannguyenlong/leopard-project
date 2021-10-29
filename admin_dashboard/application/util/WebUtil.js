@@ -1,6 +1,6 @@
 /**
  * Use for storing some function
- * @author Phan Nguyen Long
+ * @author Phan Nguyen Long, Vuong Chi Hieu
  */
 'use strict';
 

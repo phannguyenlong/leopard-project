@@ -1,11 +1,6 @@
 /**
  * Class for holding information about 1 login user
- * should these attribute
- * - ccp (common connection prodfile)
- * - organizaiton 
- * - affiliation (affiliation of that user inside organizaiton eg. org1.department1)
- * - channel (channel that user belong to) this should be an array
- * - wallet holding a wallet of that user
+ * @author Phan Nguyen Long
  */
 const fs = require('fs');
 const path = require('path');

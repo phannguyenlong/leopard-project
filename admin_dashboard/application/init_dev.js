@@ -1,3 +1,7 @@
+/**
+ * For testing purpose only
+ * @deprecated
+ */
 const { User } = require("./util/User")
 const { Gateway } = require('fabric-network');
 // const { buildCAClient, registerAndEnrollUser, enrollAdmin, regsiterUser, enrollUser } = require('../../test-application/javascript/CAUtil.js');

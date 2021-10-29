@@ -1,6 +1,6 @@
 /**
  * Route for org admin
- * @author Phan Nguyen Long
+ * @author Phan Nguyen Long, Lam Xuan Bach, Vuong Chi Hieu
  */
 
 const express = require("express")

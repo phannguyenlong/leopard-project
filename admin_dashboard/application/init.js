@@ -1,6 +1,7 @@
 /**
  * This file is using for generarte mock data
  * @author Phan Nguyen Long
+ * @deprecated
  */
 'use strict';
 

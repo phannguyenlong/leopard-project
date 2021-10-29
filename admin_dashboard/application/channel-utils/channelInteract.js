@@ -1,3 +1,8 @@
+/**
+ * For interacting the with the channel (create or delete)
+ * @author Truong Minh Khoa, Phan Nguyen Long
+ */
+
 const yaml = require("js-yaml")
 const fs = require("fs")
 const shell = require('shelljs');

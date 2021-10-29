@@ -1,3 +1,8 @@
+/**
+ * For interacting with the exsisting channel (add or delete Organization from channel)
+ * @author Lam Xuan Bach, Vuong Chi Hieu
+ */
+
 const yaml = require("js-yaml")
 const fs = require("fs")
 const shell = require('shelljs');

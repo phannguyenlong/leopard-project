@@ -1,3 +1,8 @@
+/**
+ * For deploy chaincode to exsisting channel or peer
+ * @author Truong Minh Khoa
+ */
+
 const yaml = require("js-yaml")
 const fs = require("fs")
 const shell = require('shelljs');

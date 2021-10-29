@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# @author Phan Nguyen Long
 # Start up CA server
 # upPeerAndCA.sh company_name ca_username ca_password ca_port peer_username peer_password channel_name
 # test: ./upPeerAndCA.sh company.a admin password 7054 peer pass channel1

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# @author Phan Nguyen Long
 # Start up CA server
 # upOrdererAndCA.sh company_name ca_username ca_password ca_port orderer_username orderer_password channel_name
 # test: ./upOrdererAndCA.sh company.a ordererAdmin ordererPassword 8054 peer pass channel1

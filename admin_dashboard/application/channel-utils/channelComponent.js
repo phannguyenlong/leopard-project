@@ -1,3 +1,8 @@
+/**
+ * For creating component node inside the channel (peer and CA, orderer and CA)
+ * @author Phan Nguyen Long
+ */
+
 const yaml = require("js-yaml")
 const fs = require("fs")
 const shell = require('shelljs');

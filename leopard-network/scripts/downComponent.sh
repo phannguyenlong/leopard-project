@@ -1,4 +1,5 @@
 # This script is using for down peer or channel
+# @author Phan Nguyen Long
 # test: ./downComponent.sh mode(peer or channel) channelName organization(if peer mode)
 # ex: ./downComponent.sh channel channel1
 # ex: ./downComponent.sh channel channel1 company.a

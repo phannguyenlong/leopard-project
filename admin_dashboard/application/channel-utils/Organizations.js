@@ -1,3 +1,7 @@
+/**
+ * Holding all object represent for the channel and component inside the channel
+ * @author Phan Nguyen Long, Vuong Chi Hieu
+ */
 const fs = require("fs")
 
 class Organization {

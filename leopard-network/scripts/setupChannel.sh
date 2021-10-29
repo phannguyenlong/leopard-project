@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# @author Phan Nguyen Long
 # cretea geneisis block
 # ./setupChannel.sh ordererOrg ordererPort channelName arrays_of_peersOrg
 # ./setupChannel.sh company.c 8055 channel1 company.a,company.b

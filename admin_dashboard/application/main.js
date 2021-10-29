@@ -1,3 +1,7 @@
+/**
+ * For initialize at phase 2
+ * @deprecated
+ */
 const { creatPeerAndCA, createOrdererAndCA } = require("./channel-utils/channelComponent")
 const { addOrg, removeOrg } = require("./channel-utils/channelConfiguration")
 const {createChannel} = require("./channel-utils/channelInteract")
